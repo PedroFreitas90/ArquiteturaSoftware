@@ -1,0 +1,64 @@
+package Servidor;
+
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Utilizador {
+
+	private List<Contrato> portefolio;
+	private int id;
+	private String username;
+	private String password;
+	private int plafom;
+	private java.net.Socket Socket;
+
+
+	public Utilizador( int id, String username, String password, int plafom) {
+		this.portefolio = new ArrayList<>();
+		this.id = id;
+		this.username = username;
+		this.password = password;
+		this.plafom = plafom;
+	}
+
+	public List<Contrato> getPortefolio() {
+		return portefolio;
+	}
+
+	public void setPortefolio(List<Contrato> portefolio) {
+		this.portefolio = portefolio;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public int getPlafom() {
+		return plafom;
+	}
+
+	public void setPlafom(int plafom) {
+		this.plafom = plafom;
+	}
+}
