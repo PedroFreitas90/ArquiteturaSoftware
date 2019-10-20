@@ -10,41 +10,41 @@ import yahoofinance.YahooFinance;
 
 public class ESS_ltd {
 
-	private Map<Integer,Utilizador> utilizadores;
+	private Map<Integer, Utilizador> utilizadores;
 	private Utilizador utilizador;
-	private Map<Integer,Ativo> ativos;
-	private Map<Integer,Contrato> contratos;
-	private Map<Integer,Registo> registos;
+	private Map<Integer, Ativo> ativos;
+	private Map<Integer, Contrato> contratos;
+	private Map<Integer, Registo> registos;
 
 
 	public ESS_ltd() throws IOException {
-		this.utilizador=null;
-		this.utilizadores= new HashMap<>();
-		this.ativos= new HashMap<>();
-		this.contratos=new HashMap<>();
+		this.utilizador = null;
+		this.utilizadores = new HashMap<>();
+		this.ativos = new HashMap<>();
+		this.contratos = new HashMap<>();
 		this.registos = new HashMap<>();
-		Utilizador u = new Utilizador(1,"ze","ze",20000);
-		this.utilizadores.put(1,u);
+		Utilizador u = new Utilizador(1, "ze", "ze", 20000);
+		this.utilizadores.put(1, u);
 
 	}
 
 
-	public Utilizador iniciarSessao(String username,String password) throws UtilizadorInvalidoException {
-			Utilizador u = verficaUtilizador(username);
-		 if(u!=null){
-		 	String pass= u.getPassword();
-		 	if(pass.equals(password))
-		 		this.utilizador=u;
-		 	return u;
-		 }
-		else{
+	public Utilizador iniciarSessao(String username, String password) throws UtilizadorInvalidoException {
+		Utilizador u = verficaUtilizador(username);
+		if (u != null) {
+			String pass = u.getPassword();
+			if (pass.equals(password))
+				this.utilizador = u;
+			return u;
+		} else {
 			throw new UtilizadorInvalidoException("Username ou password errada");
-		 }
+		}
 
 
 	}
-	public synchronized void registarUtilizador(String username,String password,int saldo) throws UsernameInvalidoException {
-		if ((verficaUtilizador(username))!=null)
+
+	public synchronized void registarUtilizador(String username, String password, int saldo) throws UsernameInvalidoException {
+		if ((verficaUtilizador(username)) != null)
 			throw new UsernameInvalidoException("Username inválido");
 		else {
 			int id = utilizadores.size() + 1;
@@ -53,151 +53,171 @@ public class ESS_ltd {
 		}
 	}
 
-public Utilizador verficaUtilizador(String nome){
-				Utilizador user = null;
-			for( Utilizador u :this.utilizadores.values()) {
-					if (u.getUsername().equals(nome)) {
-						user=u;
-						break;
-					}
-				}
+	public Utilizador verficaUtilizador(String nome) {
+		Utilizador user = null;
+		for (Utilizador u : this.utilizadores.values()) {
+			if (u.getUsername().equals(nome)) {
+				user = u;
+				break;
+			}
+		}
 
 		return user;
 	}
 
-	public synchronized float saldo (Utilizador u){
+	public synchronized float saldo(Utilizador u) {
 		return u.getPlafom();
 	}
 
-	public synchronized  List<Ativo> listarAtivos(){
+	public synchronized List<Ativo> listarAtivos() {
 		List<Ativo> ativos = new ArrayList<>();
-		for(Ativo a: this.ativos.values())
-				ativos.add(a.clone());
+		for (Ativo a : this.ativos.values())
+			ativos.add(a.clone());
 
 		return ativos;
 
 	}
 
 
-	public synchronized void criarContratoVenda(Utilizador u, int idAtivo, float takeprofit,float stoploss,int quantidade) throws AtivoInvalidoException, SaldoInsuficienteException {
+	public synchronized void criarContratoVenda(Utilizador u, int idAtivo, float takeprofit, float stoploss, int quantidade) throws AtivoInvalidoException, SaldoInsuficienteException {
 
 		Ativo a = this.ativos.get(idAtivo).clone();
-		if(a==null)
+		if (a == null)
 			throw new AtivoInvalidoException("Ativo nao existe");
 		else {
-			int size = this.contratos.size()+1;
-			 float preco = a.getPrecoVenda();
-			float valor_total = preco*quantidade;
-			float saldo = u.getPlafom();
-			if(saldo<valor_total)
-				throw new SaldoInsuficienteException("Saldo Insuficiente");
-			u.setPlafom(u.getPlafom()-valor_total);
-			Contrato c = new Contrato(size,idAtivo,u.getId(),preco,takeprofit,stoploss,quantidade,false,false);
-			this.utilizadores.get(u.getId()).addContrato(c);//poe no portefolio
-			this.contratos.put(size,c);//poe na lista total de contratos
-		}
-	}
-
-	public synchronized void criarContratoCompra(Utilizador u, int idAtivo, float takeprofit,float stoploss,int quantidade) throws AtivoInvalidoException, SaldoInsuficienteException {
-
-		Ativo a = this.ativos.get(idAtivo).clone();
-		if(a==null)
-			throw new AtivoInvalidoException("Ativo nao existe");
-		else {
-			int size = this.contratos.size()+1;
+			int size = this.contratos.size() + 1;
 			float preco = a.getPrecoVenda();
-			float valor_total = preco*quantidade;
+			float valor_total = preco * quantidade;
 			float saldo = u.getPlafom();
-			if(saldo<valor_total)
+			if (saldo < valor_total)
 				throw new SaldoInsuficienteException("Saldo Insuficiente");
-			u.setPlafom(u.getPlafom()-valor_total);
-			Contrato c = new Contrato(size,idAtivo,u.getId(),preco,takeprofit,stoploss,quantidade,true,false);
+			u.setPlafom(u.getPlafom() - valor_total);
+			Contrato c = new Contrato(size, idAtivo, u.getId(), preco, takeprofit, stoploss, quantidade, false, false);
 			this.utilizadores.get(u.getId()).addContrato(c);//poe no portefolio
-			this.contratos.put(size,c);//poe na lista total de contratos
+			this.contratos.put(size, c);//poe na lista total de contratos
 		}
 	}
 
-	public List<Contrato> listarPortefolio(Utilizador u){
+	public synchronized void criarContratoCompra(Utilizador u, int idAtivo, float takeprofit, float stoploss, int quantidade) throws AtivoInvalidoException, SaldoInsuficienteException {
+
+		Ativo a = this.ativos.get(idAtivo).clone();
+		if (a == null)
+			throw new AtivoInvalidoException("Ativo nao existe");
+		else {
+			int size = this.contratos.size() + 1;
+			float preco = a.getPrecoVenda();
+			float valor_total = preco * quantidade;
+			float saldo = u.getPlafom();
+			if (saldo < valor_total)
+				throw new SaldoInsuficienteException("Saldo Insuficiente");
+			u.setPlafom(u.getPlafom() - valor_total);
+			Contrato c = new Contrato(size, idAtivo, u.getId(), preco, takeprofit, stoploss, quantidade, true, false);
+			this.utilizadores.get(u.getId()).addContrato(c);//poe no portefolio
+			this.contratos.put(size, c);//poe na lista total de contratos
+		}
+	}
+
+	public List<Contrato> listarPortefolio(Utilizador u) {
 		List<Contrato> contratos = u.getPortefolio();
 		return contratos;
 	}
 
-	public synchronized void fecharContrato(Utilizador u,int idContrato ) throws ContratoInvalidoException {
-			List<Contrato> contratos = u.getPortefolio();
-			Contrato c = this.contratos.get(idContrato);
-		if(c==null || !(contratos.contains(c)))
-			 	throw new ContratoInvalidoException("Este contrato nao existe ou nao pertence ao utilizador");
-			 	if(c.isCompra())
-			 		fecharContratoCompra(u,c);
-			 	else
-			 		fecharContratoVenda(u,c);
+	public synchronized void fecharContrato(Utilizador u, int idContrato) throws ContratoInvalidoException {
+		List<Contrato> contratos = u.getPortefolio();
+		Contrato c = this.contratos.get(idContrato);
+		if (c == null || !(contratos.contains(c)))
+			throw new ContratoInvalidoException("Este contrato nao existe ou nao pertence ao utilizador");
+		if (c.isCompra())
+			fecharContratoCompra(u, c);
+		else
+			fecharContratoVenda(u, c);
 
 
 	}
 
 
 	public Ativo criarAtivo(String ativo) throws IOException {
-		float compra,venda;
+		float compra, venda;
 		int size = this.ativos.size();
 		Stock stock = YahooFinance.get(ativo);
-		BigDecimal precoVenda=stock.getQuote().getBid();
-		BigDecimal precoCompra =stock.getQuote().getAsk();
-		if(precoCompra!=null)
+		BigDecimal precoVenda = stock.getQuote().getBid();
+		BigDecimal precoCompra = stock.getQuote().getAsk();
+		if (precoCompra != null)
 			compra = precoCompra.floatValue();
 		else
-			compra=0;
-		if(precoVenda!=null)
+			compra = 0;
+		if (precoVenda != null)
 			venda = precoVenda.floatValue();
 		else
-			venda=0;
+			venda = 0;
 
 
-		Ativo a = new Ativo(size,venda,compra,ativo);
-		this.ativos.put(size,a);
+		Ativo a = new Ativo(size, venda, compra, ativo);
+		this.ativos.put(size, a);
 		return a;
 
 
 	}
 
 
+	public void fecharContratoCompra(Utilizador u, Contrato c) {
+		int size = this.registos.size() + 1;
+		int id_ativo = c.getIdAtivo();
+		Ativo a = ativos.get(id_ativo).clone();// temos que ir ver o valor atual do ativo
+		float valor_Atual = a.getPrecoCompra() * c.getQuantidade();
+		float valor_compra = c.getPreco() * c.getQuantidade();
+		float lucro = valor_Atual - valor_compra;
+		u.setPlafom(u.getPlafom() + valor_compra + lucro);
+		Registo r = new Registo(size, u.getId(), a.getId(), lucro, c.getQuantidade());
+		this.registos.put(size, r);
+		c.setEncerrado(true);
+	}
 
-public void fecharContratoCompra(Utilizador u ,Contrato c) {
-	int size = this.registos.size()+1;
-	int id_ativo = c.getIdAtivo();
-	Ativo a = ativos.get(id_ativo).clone();// temos que ir ver o valor atual do ativo
-	float valor_Atual = a.getPrecoCompra() * c.getQuantidade();
-	float valor_compra = c.getPreco() * c.getQuantidade();
-	float lucro = valor_Atual - valor_compra;
-	u.setPlafom(u.getPlafom() + valor_compra + lucro);
-	Registo r  = new Registo(size,u.getId(),a.getId(),lucro,c.getQuantidade());
-	this.registos.put(size,r);
-	c.setEncerrado(true);
-}
 
-
-	public void fecharContratoVenda(Utilizador u ,Contrato c) {
-		int size = this.registos.size()+1;
+	public void fecharContratoVenda(Utilizador u, Contrato c) {
+		int size = this.registos.size() + 1;
 		int id_ativo = c.getIdAtivo();
 		Ativo a = ativos.get(id_ativo).clone();// temos que ir ver o valor atual do ativo
 		float valor_Atual = a.getPrecoVenda() * c.getQuantidade();
 		float valor_venda = c.getPreco() * c.getQuantidade();
 		float lucro = valor_venda - valor_Atual;
-		u.setPlafom(u.getPlafom() +valor_venda + lucro);
-		Registo r  = new Registo(size,u.getId(),a.getId(),lucro,c.getQuantidade());
-		this.registos.put(size,r);
+		u.setPlafom(u.getPlafom() + valor_venda + lucro);
+		Registo r = new Registo(size, u.getId(), a.getId(), lucro, c.getQuantidade());
+		this.registos.put(size, r);
 		c.setEncerrado(true);
 	}
 
-	public List<Registo> listaRegistos(Utilizador u){
-		List<Registo> registos  = new ArrayList<>();
+	public List<Registo> listaRegistos(Utilizador u) {
+		List<Registo> registos = new ArrayList<>();
 
-		for( Registo r :this.registos.values())
-				if(r.getIdUtilizador()==u.getId())
-					registos.add(r);
-	return registos;
+		for (Registo r : this.registos.values())
+			if (r.getIdUtilizador() == u.getId())
+				registos.add(r);
+		return registos;
 	}
 
+	public void fecharContratosComLimites(Ativo a) throws ContratoInvalidoException {
+		Utilizador u = null;
+		float valor_atual;
+		for (Contrato c : this.contratos.values()) {
+			if (c.getIdAtivo() == a.getId() && !(c.isEncerrado()))
+				if (c.isCompra()) {// se é de compra
+					valor_atual = a.getPrecoCompra();
+					if (valor_atual <= c.getStopLoss() || valor_atual >= c.getTakeProfit()) {
+						u = this.utilizadores.get(c.getIdUtilizador());
+						fecharContrato(u, c.getId());
+					}
 
+				} else {
+					valor_atual = a.getPrecoVenda();
+					if (valor_atual <= c.getStopLoss() || valor_atual >= c.getTakeProfit()) {
+						u = this.utilizadores.get(c.getIdUtilizador());
+						fecharContrato(u, c.getId());
+					}
+				}
+
+		}
+	}
 }
 
 

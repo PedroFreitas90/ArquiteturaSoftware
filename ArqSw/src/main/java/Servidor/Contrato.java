@@ -30,7 +30,7 @@ public class Contrato {
 		this.idUtilizador=p.getIdUtilizador();
 		this.preco=p.getPreco();
 		this.takeProfit=p.getTakeProfit();
-		this.stopLess=p.getStopLess();
+		this.stopLess=p.getStopLoss();
 		this.quantidade = p.getQuantidade();
 		this.compra=p.isCompra();
 		this.encerrado=p.isEncerrado();
@@ -73,15 +73,15 @@ public class Contrato {
 		return takeProfit;
 	}
 
-	public void setTakeProfit(int takeProfit) {
+	public void setTakeProfit(float takeProfit) {
 		this.takeProfit = takeProfit;
 	}
 
-	public float getStopLess() {
+	public float getStopLoss() {
 		return stopLess;
 	}
 
-	public void setStopLess(int stopLess) {
+	public void setStopLess(float stopLess) {
 		this.stopLess = stopLess;
 	}
 

@@ -34,9 +34,11 @@ class UpdateAtivo extends Thread{
 
             ativo.setPrecoCompra(compra);
             ativo.setPrecoVenda(venda);
+            ess.fecharContratosComLimites(ativo);
+
             sleep(2);
         }
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException |ContratoInvalidoException e) {
                     e.printStackTrace();
                 }
 
@@ -69,9 +71,9 @@ public class RealTime {
        up4.start();
        up5.start();
 
-
-
     }
+
+
 
 
 
