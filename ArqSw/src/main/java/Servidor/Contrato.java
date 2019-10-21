@@ -1,4 +1,7 @@
 package Servidor;
+
+import java.util.Objects;
+
 public class Contrato {
 
 	private int id;
@@ -6,7 +9,7 @@ public class Contrato {
 	private int idUtilizador;
 	private float preco;
 	private float takeProfit;
-	private float stopLess;
+	private float stopLoss;
 	private int quantidade;
 	private boolean compra;
 	private boolean encerrado;
@@ -18,7 +21,7 @@ public class Contrato {
 		this.idUtilizador = idUtilizador;
 		this.preco = preco;
 		this.takeProfit = takeProfit;
-		this.stopLess = stopLess;
+		this.stopLoss = stopLess;
 		this.quantidade = quantidade;
 		this.compra = compra;
 		this.encerrado = encerrado;
@@ -30,14 +33,26 @@ public class Contrato {
 		this.idUtilizador=p.getIdUtilizador();
 		this.preco=p.getPreco();
 		this.takeProfit=p.getTakeProfit();
-		this.stopLess=p.getStopLoss();
+		this.stopLoss=p.getStopLoss();
 		this.quantidade = p.getQuantidade();
 		this.compra=p.isCompra();
 		this.encerrado=p.isEncerrado();
 	}
 
+    public Contrato() {
+		this.id = 0;
+		this.idAtivo = 0;
+		this.idUtilizador = 0;
+		this.preco = 0;
+		this.takeProfit = 0;
+		this.stopLoss = 0;
+		this.quantidade = 0;
+		this.compra = false;
+		this.encerrado = false;
+    }
 
-	public int getId() {
+
+    public int getId() {
 		return id;
 	}
 
@@ -78,11 +93,11 @@ public class Contrato {
 	}
 
 	public float getStopLoss() {
-		return stopLess;
+		return stopLoss;
 	}
 
-	public void setStopLess(float stopLess) {
-		this.stopLess = stopLess;
+	public void setStopLoss(float stopLess) {
+		this.stopLoss = stopLess;
 	}
 
 	public int getQuantidade() {
@@ -121,10 +136,31 @@ public class Contrato {
 				", idUtilizador=" + idUtilizador +
 				", preco=" + preco +
 				", takeProfit=" + takeProfit +
-				", stopLess=" + stopLess +
+				", stopLess=" + stopLoss +
 				", quantidade=" + quantidade +
 				", compra=" + compra +
 				", encerrado=" + encerrado +
 				'}';
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof Contrato)) return false;
+		Contrato contrato = (Contrato) o;
+		return getId() == contrato.getId() &&
+				getIdAtivo() == contrato.getIdAtivo() &&
+				getIdUtilizador() == contrato.getIdUtilizador() &&
+				Float.compare(contrato.getPreco(), getPreco()) == 0 &&
+				Float.compare(contrato.getTakeProfit(), getTakeProfit()) == 0 &&
+				Float.compare(contrato.getStopLoss(), getStopLoss()) == 0 &&
+				getQuantidade() == contrato.getQuantidade() &&
+				isCompra() == contrato.isCompra() &&
+				isEncerrado() == contrato.isEncerrado();
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getId(), getIdAtivo(), getIdUtilizador(), getPreco(), getTakeProfit(), getStopLoss(), getQuantidade(), isCompra(), isEncerrado());
 	}
 }

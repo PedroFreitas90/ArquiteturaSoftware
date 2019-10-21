@@ -11,7 +11,6 @@ public class Utilizador {
 	private String username;
 	private String password;
 	private float plafom;
-	private java.net.Socket Socket;
 
 
 	public Utilizador( int id, String username, String password, float plafom) {
@@ -22,7 +21,15 @@ public class Utilizador {
 		this.plafom = plafom;
 	}
 
-	public List<Contrato> getPortefolio() {
+    public Utilizador() {
+        this.portefolio= new ArrayList<>();
+        this.id=0;
+        this.username="";
+        this.password="";
+        this.plafom=0;
+    }
+
+    public List<Contrato> getPortefolio() {
 		return portefolio;
 	}
 
@@ -63,6 +70,7 @@ public class Utilizador {
 	}
 
 	public void addContrato(Contrato c ){
+
 		this.portefolio.add(c);
 	}
 }

@@ -1,9 +1,4 @@
 package DAOS;
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -11,39 +6,25 @@ import java.sql.SQLException;
 
 public class Connect {
 
-    private static final String USERNAME = "root";
-    private static final String PASSWORD = "root";
-    private static final String URL = "localhost";
-    private static final String SCHEMA = "mydb";
-
-    static {
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-        } catch (Exception e) {
-            e.printStackTrace();
+    public static Connection connect(){
+        Connection connect = null;
+        try{
+            String url = "jdbc:sqlite:/home/francisco/Downloads/db";
+            Class.forName("org.sqlite.JDBC");
+            connect = DriverManager.getConnection(url);
+        } catch(SQLException | ClassNotFoundException e){
+            System.out.println(e.getMessage());
         }
+
+        return connect;
     }
 
-    /**
-     * Abre a ligação à base de dados.
-     * @return Connection
-     * @throws java.sql.SQLException
-     */
-
-    public static Connection connect() throws SQLException {
-        return DriverManager.getConnection("",USERNAME,PASSWORD);
-    }
-
-    /**
-     * Fecha a ligação à base de dados, se aberta.
-     * @param c Connection
-     */
-    public static void close(Connection c) {
-        try {
-            if(c!=null && !c.isClosed()) {
+    public static void close(Connection c){
+        try{
+            if(c != null && !c.isClosed()){
                 c.close();
             }
-        } catch (Exception e) {
+        } catch (Exception e){
             e.printStackTrace();
         }
     }

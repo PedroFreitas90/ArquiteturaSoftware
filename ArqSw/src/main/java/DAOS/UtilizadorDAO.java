@@ -1,5 +1,6 @@
-/*package DAOS;
+package DAOS;
 
+import Servidor.Contrato;
 import Servidor.Utilizador;
 
 import java.sql.Connection;
@@ -7,227 +8,210 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 public class UtilizadorDAO implements Map<Integer, Utilizador> {
 
-        private Connection conn;
+    private Connection conn;
 
+    @Override
+    public synchronized int size() {
+        int i = 0;
+        try {
+            conn = Connect.connect();
+            Statement stm = conn.createStatement();
+            ResultSet rs = stm.executeQuery("SELECT * FROM Utilizador");
+            for (; rs.next(); i++) ;
 
-        public void clear () {
-            try {
-                conn = Connect.connect();
-                Statement stm = conn.createStatement();
-                stm.executeUpdate("DELETE FROM Utilizador");
-            }catch(SQLException e){
-                throw new NullPointerException(e.getMessage());
-            }finally {
-                Connect.close(conn);
-            }
+        } catch (SQLException e) {
+            throw new NullPointerException(e.getMessage());
+        } finally {
+            Connect.close(conn);
         }
+        return i;
+    }
 
-        public boolean containsKey(Object key) throws NullPointerException {
-            boolean b = false;
-            try {
-                conn = Connect.connect();
-                Statement stm = conn.createStatement();
-                String sql = "SELECT Username FROM Utilizador WHERE Username='"+(String)key+"'";
-                ResultSet rs = stm.executeQuery(sql);
-                b = rs.next();
-            }catch(SQLException e){
-                throw new NullPointerException(e.getMessage());
-            }finally {
-                Connect.close(conn);
-            }
-            return b;
-        }
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
 
-        public boolean containsValue(Object value) {
-            boolean b = false;
-            try {
-                conn = Connect.connect();
-                Statement stm = conn.createStatement();
-                Utilizador u = (Utilizador) value;
-                String sql = "SELECT Username FROM Utilizador WHERE Username='"+u.getUsername()+"' AND password ='"+u.getPassword()+"'";
-                ResultSet rs = stm.executeQuery(sql);
-                b = rs.next();
-            }catch(SQLException e){
-                throw new NullPointerException(e.getMessage());
-            }finally {
-                Connect.close(conn);
-            }
-            return b;
-        }
+    @Override
+    public boolean containsKey(Object o) {
+        return false;
+    }
 
-        public Set<Entry<Integer, Utilizador>> entrySet() {
-            Set<String> keys = new HashSet<>(this.keySet());
+    @Override
+    public boolean containsValue(Object o) {
+        return false;
+    }
 
-            Map<String,Utilizador> map = new HashMap<>();
-            for(String key : keys){
-                map.put(key,this.get(key));
-            }
-            return map.entrySet();
-        }
+    @Override
+    public synchronized Utilizador get(Object key) {
 
-        public boolean equals(Object o) {
-            throw new NullPointerException("not implemented!");
-        }
+        Utilizador u = new Utilizador();
+        List<Contrato> contratos = new ArrayList<>();
+        try {
+            conn = Connect.connect();
+            PreparedStatement ps = conn.prepareStatement("SELECT * FROM Utilizador WHERE idUtilizador= ?");
+            ps.setString(1, Integer.toString((Integer) key));
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                u.setId(rs.getInt("Utilizador.idUtlizador"));
+                u.setUsername(rs.getNString("username"));
+                u.setUsername(rs.getNString("password"));
+                u.setPlafom(rs.getLong("plafom"));
+                ps = conn.prepareStatement("SELECT * FROM Contrato WHERE idUtilizador= ?");
+                ps.setString(1, Integer.toString((Integer) key));
+                rs = ps.executeQuery();
+                if (rs.next()) {
+                    Contrato c = new Contrato();
+                    c.setId(rs.getInt("idContrato"));
+                    c.setIdAtivo(rs.getInt("idAtivo"));
+                    c.setIdUtilizador(rs.getInt("Utilizador.idUtlizador"));
+                    c.setPreco(rs.getInt("preco"));
+                    c.setTakeProfit(rs.getLong("takeprofit"));
+                    c.setStopLoss(rs.getLong("stoploss"));
+                    c.setQuantidade(rs.getInt("quantidade"));
+                    int compra = rs.getInt("compra");
+                    if (compra == 0)
+                        c.setCompra(false);
+                    else
+                        c.setCompra(true);
+                    int encerrado = rs.getInt("encerrado");
+                    if (encerrado == 0)
+                        c.setEncerrado(false);
+                    else
+                        c.setEncerrado(true);
+                    contratos.add(c);
 
-        public Funcionario get(Object key) {
-            Funcionario f = null;
-            try {
-                conn = Connect.connect();
-                Statement stm = conn.createStatement();
-                String sql = "SELECT * FROM Funcionario WHERE Username='"+(String)key+"'";
-                ResultSet rs = stm.executeQuery(sql);
-                if (rs.next())
-                    f = new Funcionario(rs.getString(1),rs.getString(2));
-            }catch(SQLException e){
-                throw new NullPointerException(e.getMessage());
-            }finally {
-                try{
-                    Connect.close(conn);
                 }
-                catch(Exception e){
-                    System.out.printf(e.getMessage());
-                }
-            }
-            return f;
-        }
-
-
-
-        public boolean isEmpty() {
-            return size() == 0;
-        }
-
-        public Set<String> keySet() {
-            Set<String> col = null;
+            } else u = null;
+            u.setPortefolio(contratos);
+        } catch (SQLException e) {
+            System.out.printf(e.getMessage());
+        } finally {
             try {
-                conn = Connect.connect();
-                col = new HashSet<>();
-                Statement stm = conn.createStatement();
-                ResultSet rs = stm.executeQuery("SELECT Username FROM Funcionario");
-                for (;rs.next();) {
-                    col.add(rs.getString("Username"));
-                }
-            }catch(SQLException e){
-                throw new NullPointerException(e.getMessage());
-            }finally {
                 Connect.close(conn);
-            }
-            return col;
-        }
-
-        public Funcionario put(String key, Funcionario value) {
-            Funcionario f = null;
-
-            if(this.containsKey(key))
-                f = this.get(key);
-            else f = value;
-
-            try {
-                conn = Connect.connect();
-                PreparedStatement ps = conn.prepareStatement("DELETE FROM Funcionario WHERE Username = ?");
-                ps.setString(1,key);
-                ps.executeUpdate();
-
-                ps = conn.prepareStatement("INSERT INTO Funcionario (Username,Password) VALUES (?,?)");
-                ps.setString(1,key);
-                ps.setString(2,value.getPassword());
-                ps.executeUpdate();
-            }
-            catch(SQLException e){
+            } catch (Exception e) {
                 System.out.printf(e.getMessage());
             }
-            finally{
-                try{
-                    Connect.close(conn);
-                }
-                catch(Exception e){
-                    System.out.printf(e.getMessage());
-                }
-            }
-            return f;
         }
-
-
-        public Funcionario remove(Object key) {
-            Funcionario f = this.get(key);
-            try {
-                conn = Connect.connect();
-                PreparedStatement stm = conn.prepareStatement("DELETE FROM Funcionario WHERE Username = ?");
-                stm.setString(1,(String)key);
-                stm.executeUpdate();
-            } catch(SQLException e){
-                System.out.printf(e.getMessage());
-            }
-            finally{
-                try{
-                    Connect.close(conn);
-                }
-                catch(Exception e){
-                    System.out.printf(e.getMessage());
-                }
-            }
-            return f;
-        }
-
-
-        public int size() {
-            int size = -1;
-            try {
-                conn = Connect.connect();
-                Statement stm = conn.createStatement();
-                ResultSet rs = stm.executeQuery("SELECT COUNT(*) FROM Funcionario");
-                if(rs.next())
-                    size = rs.getInt(1);
-            }
-            catch(SQLException e){
-                System.out.printf(e.getMessage());
-            }
-            finally{
-                try{
-                    Connect.close(conn);
-                }
-                catch(Exception e){
-                    System.out.printf(e.getMessage());
-                }
-            }
-            return size;
-        }
-
-
-        public Collection<Utilizador> values() {
-            Collection<Utilizador> col = new HashSet<>();
-            try {
-                conn = Connect.connect();
-                Statement stm = conn.createStatement();
-                ResultSet rs = stm.executeQuery("SELECT * FROM Utilizador");
-                for (;rs.next();) {
-                    col.add(new Utilizador(rs.getString(1),rs.getString(2)));
-                }
-            }catch(SQLException e){
-                throw new NullPointerException(e.getMessage());
-            }finally {
-                Connect.close(conn);
-            }
-            return col;
-        }
-
-
-        @Override
-        public void putAll(Map<? extends Integer, ? extends Utilizador> m) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-
+        return u;
 
     }
 
-*/
+    @Override
+    public synchronized Utilizador put(Integer key, Utilizador utilizador) {
+        try {
+            conn = Connect.connect();
+            PreparedStatement ps = conn.prepareStatement("INSERT INTO Utilizador (IdUtilizador,username,password,plafom) VALUES (?,?,?,?)");
+            ps.setString(1, Integer.toString(key));
+            ps.setString(2, utilizador.getUsername());
+            ps.setString(3, utilizador.getPassword());
+            ps.setString(4, Float.toString(utilizador.getPlafom()));
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.printf(e.getMessage());
+        } finally {
+            try {
+                Connect.close(conn);
+
+            } catch (Exception e) {
+                System.out.printf(e.getMessage());
+            }
+        }
+        return utilizador;
+
+    }
+
+    @Override
+    public Utilizador remove(Object o) {
+        return null;
+    }
+
+    @Override
+    public void putAll(Map<? extends Integer, ? extends Utilizador> map) {
+
+    }
+
+    @Override
+    public void clear() {
+
+    }
+
+    @Override
+    public Set<Integer> keySet() {
+        return null;
+    }
+
+    @Override
+    public synchronized Collection<Utilizador> values() {
+        Collection<Utilizador> col = new HashSet<Utilizador>();
+        try {
+            conn = Connect.connect();
+            Statement stm = conn.createStatement();
+            ResultSet rs = stm.executeQuery("SELECT * FROM Utilizador");
+            for (; rs.next(); ) {
+                List<Contrato> contratos = new ArrayList<>();
+                Utilizador u = new Utilizador(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getLong(4));
+                col.add(u);
+                List<Contrato> c =contratosUtilizador(rs.getInt(1));
+                u.setPortefolio(c);
+            }
+
+        } catch (SQLException e) {
+            throw new NullPointerException(e.getMessage());
+        } finally {
+            Connect.close(conn);
+        }
+
+
+        return col;
+    }
+
+    @Override
+    public Set<Entry<Integer, Utilizador>> entrySet() {
+        return null;
+    }
+
+
+    public synchronized List<Contrato> contratosUtilizador(int id) {
+        List<Contrato> contratos = new ArrayList<>();
+        try {
+            conn = Connect.connect();
+
+            PreparedStatement ps = conn.prepareStatement("SELECT * FROM Contrato WHERE idUtilizador= ?");
+            ps.setString(1, Integer.toString((Integer) id));
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Contrato c = new Contrato();
+                c.setId(rs.getInt("idContrato"));
+                c.setIdAtivo(rs.getInt("idAtivo"));
+                c.setIdUtilizador(rs.getInt("idUtilizador"));
+                c.setPreco(rs.getInt("preco"));
+                c.setTakeProfit(rs.getLong("takeprofit"));
+                c.setStopLoss(rs.getLong("stoploss"));
+                c.setQuantidade(rs.getInt("quantidade"));
+                int compra = rs.getInt("compra");
+                if (compra == 0)
+                    c.setCompra(false);
+                else
+                    c.setCompra(true);
+                int encerrado = rs.getInt("encerrado");
+                if (encerrado == 0)
+                    c.setEncerrado(false);
+                else
+                    c.setEncerrado(true);
+                contratos.add(c);
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            Connect.close(conn);
+        }
+        return contratos;
+    }
+}

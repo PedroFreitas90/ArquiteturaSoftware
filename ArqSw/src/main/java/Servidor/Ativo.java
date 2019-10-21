@@ -5,6 +5,7 @@ import yahoofinance.YahooFinance;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 public class Ativo {
 	private int id;
@@ -24,6 +25,13 @@ public class Ativo {
 		this.precoCompra = a.getPrecoCompra();
 		this.precoVenda = a.getPrecoVenda();
 		this.descricao = a.getDescricao();
+	}
+
+	public Ativo() {
+		this.id=0;
+		this.precoVenda=0;
+		this.precoCompra=0;
+		this.descricao="";
 	}
 
 	public float getPrecoVenda() {
@@ -71,4 +79,16 @@ public class Ativo {
 				", descricao='" + descricao + '\'' +
 				'}';
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof Ativo)) return false;
+		Ativo ativo = (Ativo) o;
+		return getId() == ativo.getId() &&
+				Float.compare(ativo.getPrecoVenda(), getPrecoVenda()) == 0 &&
+				Float.compare(ativo.getPrecoCompra(), getPrecoCompra()) == 0 &&
+				Objects.equals(getDescricao(), ativo.getDescricao());
+	}
+
 }

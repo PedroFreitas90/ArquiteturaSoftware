@@ -1,4 +1,8 @@
 package Servidor;
+import DAOS.AtivoDAO;
+import DAOS.ContratoDAO;
+import DAOS.RegistoDAO;
+import DAOS.UtilizadorDAO;
 import Servidor.Utilizador;
 
 import java.io.IOException;
@@ -10,21 +14,19 @@ import yahoofinance.YahooFinance;
 
 public class ESS_ltd {
 
-	private Map<Integer, Utilizador> utilizadores;
-	private Utilizador utilizador;
-	private Map<Integer, Ativo> ativos;
-	private Map<Integer, Contrato> contratos;
-	private Map<Integer, Registo> registos;
+	private UtilizadorDAO utilizadores;
+	private AtivoDAO ativos;
+	private ContratoDAO contratos;
+	private RegistoDAO registos;
 
 
 	public ESS_ltd() throws IOException {
-		this.utilizador = null;
-		this.utilizadores = new HashMap<>();
-		this.ativos = new HashMap<>();
-		this.contratos = new HashMap<>();
-		this.registos = new HashMap<>();
-		Utilizador u = new Utilizador(1, "ze", "ze", 20000);
-		this.utilizadores.put(1, u);
+		this.utilizadores = new UtilizadorDAO();
+		this.ativos = new AtivoDAO();
+		this.contratos = new ContratoDAO();
+		this.registos = new RegistoDAO();
+		//Utilizador u = new Utilizador(1, "ze", "ze", 20000);
+		//this.utilizadores.put(1, u);
 
 	}
 
@@ -34,12 +36,11 @@ public class ESS_ltd {
 		if (u != null) {
 			String pass = u.getPassword();
 			if (pass.equals(password))
-				this.utilizador = u;
 			return u;
-		} else {
+		} else
 			throw new UtilizadorInvalidoException("Username ou password errada");
-		}
 
+		return u;
 
 	}
 
@@ -112,7 +113,7 @@ public class ESS_ltd {
 				throw new SaldoInsuficienteException("Saldo Insuficiente");
 			u.setPlafom(u.getPlafom() - valor_total);
 			Contrato c = new Contrato(size, idAtivo, u.getId(), preco, takeprofit, stoploss, quantidade, true, false);
-			this.utilizadores.get(u.getId()).addContrato(c);//poe no portefolio
+			u.addContrato(c);//poe no portefolio
 			this.contratos.put(size, c);//poe na lista total de contratos
 		}
 	}
@@ -123,14 +124,19 @@ public class ESS_ltd {
 	}
 
 	public synchronized void fecharContrato(Utilizador u, int idContrato) throws ContratoInvalidoException {
+		boolean sucess = false;
 		List<Contrato> contratos = u.getPortefolio();
 		Contrato c = this.contratos.get(idContrato);
-		if (c == null || !(contratos.contains(c)))
+			for( Contrato cc :contratos)
+				if(c!=null && c.equals(cc)) {
+					sucess=true;
+					if (c.isCompra())
+						fecharContratoCompra(u, c);
+					else
+						fecharContratoVenda(u, c);
+				}
+			if(!sucess)
 			throw new ContratoInvalidoException("Este contrato nao existe ou nao pertence ao utilizador");
-		if (c.isCompra())
-			fecharContratoCompra(u, c);
-		else
-			fecharContratoVenda(u, c);
 
 
 	}
@@ -138,7 +144,7 @@ public class ESS_ltd {
 
 	public Ativo criarAtivo(String ativo) throws IOException {
 		float compra, venda;
-		int size = this.ativos.size();
+		int size = this.ativos.size()+1;
 		Stock stock = YahooFinance.get(ativo);
 		BigDecimal precoVenda = stock.getQuote().getBid();
 		BigDecimal precoCompra = stock.getQuote().getAsk();
@@ -153,6 +159,7 @@ public class ESS_ltd {
 
 
 		Ativo a = new Ativo(size, venda, compra, ativo);
+		if(!this.ativos.containsValue(a))
 		this.ativos.put(size, a);
 		return a;
 
@@ -217,6 +224,7 @@ public class ESS_ltd {
 				}
 
 		}
+
 	}
 }
 

@@ -69,13 +69,21 @@ public class ThreadCliente extends Thread {
 
 
        public String iniciar_Sessao(String username,String password ){
-           try {
+           boolean sucess = false;
+       try {
               user= ess.iniciarSessao(username,password);
+              sucess=true;
 
            } catch (UtilizadorInvalidoException e) {
                e.printStackTrace();
            }
-           return "SUCESSO";
+       finally {
+           if(sucess)
+               return "SUCESSO";
+           else
+               return "Login não efetuado";
+       }
+
        }
 
        public String registar_utilizador(String username,String password,String saldo )throws NumberFormatException {

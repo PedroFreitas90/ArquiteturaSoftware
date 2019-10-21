@@ -18,6 +18,7 @@ class UpdateAtivo extends Thread{
         public void run(){
             try {
         while(true) {
+            sleep(2);
             float compra,venda;
             Stock stock = null;
             stock = YahooFinance.get(ativo.getDescricao());
@@ -36,9 +37,8 @@ class UpdateAtivo extends Thread{
             ativo.setPrecoVenda(venda);
             ess.fecharContratosComLimites(ativo);
 
-            sleep(2);
         }
-        } catch (IOException | InterruptedException |ContratoInvalidoException e) {
+        } catch (IOException | InterruptedException | ContratoInvalidoException e) {
                     e.printStackTrace();
                 }
 
