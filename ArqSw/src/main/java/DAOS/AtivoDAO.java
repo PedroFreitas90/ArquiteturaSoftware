@@ -36,9 +36,29 @@ public class AtivoDAO implements Map<Integer, Ativo> {
     }
 
     @Override
-    public boolean containsKey(Object o) {
-        return false;
+    public boolean containsKey(Object key) {
+        boolean res = false;
+
+        try{
+            conn = Connect.connect();
+            PreparedStatement ps = conn.prepareStatement("SELECT * FROM Ativo WHERE descricao = ?");
+            ps.setString(1, (String) key);
+            ResultSet rs = ps.executeQuery();
+            res = rs.next();
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
+        finally {
+            try {
+                Connect.close(conn);
+            }
+            catch (Exception e){
+                System.out.println(e.getMessage());
+            }
+        }
+        return res;
     }
+
 
     @Override
     public synchronized boolean containsValue(Object o) {

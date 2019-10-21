@@ -25,8 +25,6 @@ public class ESS_ltd {
 		this.ativos = new AtivoDAO();
 		this.contratos = new ContratoDAO();
 		this.registos = new RegistoDAO();
-		//Utilizador u = new Utilizador(1, "ze", "ze", 20000);
-		//this.utilizadores.put(1, u);
 
 	}
 
@@ -93,6 +91,7 @@ public class ESS_ltd {
 			if (saldo < valor_total)
 				throw new SaldoInsuficienteException("Saldo Insuficiente");
 			u.setPlafom(u.getPlafom() - valor_total);
+			this.utilizadores.put(u.getId(),u);
 			Contrato c = new Contrato(size, idAtivo, u.getId(), preco, takeprofit, stoploss, quantidade, false, false);
 			this.utilizadores.get(u.getId()).addContrato(c);//poe no portefolio
 			this.contratos.put(size, c);//poe na lista total de contratos
@@ -112,6 +111,7 @@ public class ESS_ltd {
 			if (saldo < valor_total)
 				throw new SaldoInsuficienteException("Saldo Insuficiente");
 			u.setPlafom(u.getPlafom() - valor_total);
+			this.utilizadores.put(u.getId(),u);
 			Contrato c = new Contrato(size, idAtivo, u.getId(), preco, takeprofit, stoploss, quantidade, true, false);
 			u.addContrato(c);//poe no portefolio
 			this.contratos.put(size, c);//poe na lista total de contratos
@@ -142,9 +142,8 @@ public class ESS_ltd {
 	}
 
 
-	public Ativo criarAtivo(String ativo) throws IOException {
+	public Ativo criarAtivo(String ativo,int id) throws IOException {
 		float compra, venda;
-		int size = this.ativos.size()+1;
 		Stock stock = YahooFinance.get(ativo);
 		BigDecimal precoVenda = stock.getQuote().getBid();
 		BigDecimal precoCompra = stock.getQuote().getAsk();
@@ -156,11 +155,9 @@ public class ESS_ltd {
 			venda = precoVenda.floatValue();
 		else
 			venda = 0;
-
-
-		Ativo a = new Ativo(size, venda, compra, ativo);
+		Ativo a = new Ativo(id, venda, compra, ativo);
 		if(!this.ativos.containsValue(a))
-		this.ativos.put(size, a);
+		this.ativos.put(id, a);
 		return a;
 
 
@@ -175,9 +172,11 @@ public class ESS_ltd {
 		float valor_compra = c.getPreco() * c.getQuantidade();
 		float lucro = valor_Atual - valor_compra;
 		u.setPlafom(u.getPlafom() + valor_compra + lucro);
+		this.utilizadores.put(u.getId(),u);
 		Registo r = new Registo(size, u.getId(), a.getId(), lucro, c.getQuantidade());
 		this.registos.put(size, r);
 		c.setEncerrado(true);
+		this.contratos.put(c.getId(),c);
 	}
 
 
@@ -189,9 +188,11 @@ public class ESS_ltd {
 		float valor_venda = c.getPreco() * c.getQuantidade();
 		float lucro = valor_venda - valor_Atual;
 		u.setPlafom(u.getPlafom() + valor_venda + lucro);
+		this.utilizadores.put(u.getId(),u);
 		Registo r = new Registo(size, u.getId(), a.getId(), lucro, c.getQuantidade());
 		this.registos.put(size, r);
 		c.setEncerrado(true);
+		this.contratos.put(c.getId(),c);
 	}
 
 	public List<Registo> listaRegistos(Utilizador u) {

@@ -46,7 +46,7 @@ public class ContratoDAO implements Map<Integer, Contrato> {
     }
 
     @Override
-    public Contrato get(Object key) {
+    public  synchronized Contrato get(Object key) {
 
         Contrato c = new Contrato();
         try{
@@ -95,7 +95,11 @@ public class ContratoDAO implements Map<Integer, Contrato> {
     public synchronized Contrato put(Integer key, Contrato contrato) {
         try{
             conn = Connect.connect();
-            PreparedStatement ps = conn.prepareStatement(
+            PreparedStatement ps = conn.prepareStatement("DELETE FROM Contrato WHERE idContrato = ?");
+            ps.setString(1,Integer.toString((Integer) key));
+            ps.executeUpdate();
+
+            ps = conn.prepareStatement(
                     "INSERT INTO Contrato (idContrato,idAtivo,idUtilizador,preco,takeprofit,stoploss,quantidade,compra,encerrado) " +
                             "VALUES (?,?,?,?,?,?,?,?,?)");
             ps.setString(1,Integer.toString(key));

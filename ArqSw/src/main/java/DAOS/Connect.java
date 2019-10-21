@@ -9,7 +9,7 @@ public class Connect {
     public static Connection connect(){
         Connection connect = null;
         try{
-            String url = "jdbc:sqlite:/home/francisco/Downloads/db";
+            String url = "jdbc:sqlite:/home/francisco/Desktop/ArquiteturaSoftware/ArqSw/db";
             Class.forName("org.sqlite.JDBC");
             connect = DriverManager.getConnection(url);
         } catch(SQLException | ClassNotFoundException e){

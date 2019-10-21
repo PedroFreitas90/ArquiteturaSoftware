@@ -62,24 +62,24 @@ public class UtilizadorDAO implements Map<Integer, Utilizador> {
                 u.setUsername(rs.getNString("username"));
                 u.setUsername(rs.getNString("password"));
                 u.setPlafom(rs.getLong("plafom"));
-                ps = conn.prepareStatement("SELECT * FROM Contrato WHERE idUtilizador= ?");
-                ps.setString(1, Integer.toString((Integer) key));
-                rs = ps.executeQuery();
-                if (rs.next()) {
+             PreparedStatement   pa = conn.prepareStatement("SELECT * FROM Contrato WHERE idUtilizador= ?");
+                pa.setString(1, Integer.toString((Integer) key));
+                ResultSet ra = pa.executeQuery();
+                if (ra.next()) {
                     Contrato c = new Contrato();
-                    c.setId(rs.getInt("idContrato"));
-                    c.setIdAtivo(rs.getInt("idAtivo"));
-                    c.setIdUtilizador(rs.getInt("Utilizador.idUtlizador"));
-                    c.setPreco(rs.getInt("preco"));
-                    c.setTakeProfit(rs.getLong("takeprofit"));
-                    c.setStopLoss(rs.getLong("stoploss"));
-                    c.setQuantidade(rs.getInt("quantidade"));
-                    int compra = rs.getInt("compra");
+                    c.setId(ra.getInt("idContrato"));
+                    c.setIdAtivo(ra.getInt("idAtivo"));
+                    c.setIdUtilizador(ra.getInt("Utilizador.idUtlizador"));
+                    c.setPreco(ra.getInt("preco"));
+                    c.setTakeProfit(ra.getLong("takeprofit"));
+                    c.setStopLoss(ra.getLong("stoploss"));
+                    c.setQuantidade(ra.getInt("quantidade"));
+                    int compra = ra.getInt("compra");
                     if (compra == 0)
                         c.setCompra(false);
                     else
                         c.setCompra(true);
-                    int encerrado = rs.getInt("encerrado");
+                    int encerrado = ra.getInt("encerrado");
                     if (encerrado == 0)
                         c.setEncerrado(false);
                     else
@@ -106,7 +106,10 @@ public class UtilizadorDAO implements Map<Integer, Utilizador> {
     public synchronized Utilizador put(Integer key, Utilizador utilizador) {
         try {
             conn = Connect.connect();
-            PreparedStatement ps = conn.prepareStatement("INSERT INTO Utilizador (IdUtilizador,username,password,plafom) VALUES (?,?,?,?)");
+            PreparedStatement ps = conn.prepareStatement("DELETE FROM Utilizador WHERE idUtilizador = ?");
+            ps.setString(1,Integer.toString((Integer) key));
+            ps.executeUpdate();
+            ps = conn.prepareStatement("INSERT INTO Utilizador (IdUtilizador,username,password,plafom) VALUES (?,?,?,?)");
             ps.setString(1, Integer.toString(key));
             ps.setString(2, utilizador.getUsername());
             ps.setString(3, utilizador.getPassword());
@@ -154,11 +157,10 @@ public class UtilizadorDAO implements Map<Integer, Utilizador> {
             Statement stm = conn.createStatement();
             ResultSet rs = stm.executeQuery("SELECT * FROM Utilizador");
             for (; rs.next(); ) {
-                List<Contrato> contratos = new ArrayList<>();
                 Utilizador u = new Utilizador(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getLong(4));
-                col.add(u);
                 List<Contrato> c =contratosUtilizador(rs.getInt(1));
                 u.setPortefolio(c);
+                col.add(u);
             }
 
         } catch (SQLException e) {
@@ -183,9 +185,9 @@ public class UtilizadorDAO implements Map<Integer, Utilizador> {
             conn = Connect.connect();
 
             PreparedStatement ps = conn.prepareStatement("SELECT * FROM Contrato WHERE idUtilizador= ?");
-            ps.setString(1, Integer.toString((Integer) id));
+            ps.setString(1, Integer.toString( id));
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
+            for (; rs.next(); )  {
                 Contrato c = new Contrato();
                 c.setId(rs.getInt("idContrato"));
                 c.setIdAtivo(rs.getInt("idAtivo"));

@@ -35,6 +35,8 @@ class UpdateAtivo extends Thread{
 
             ativo.setPrecoCompra(compra);
             ativo.setPrecoVenda(venda);
+            ess.criarAtivo(ativo.getDescricao(),ativo.getId());
+
             ess.fecharContratosComLimites(ativo);
 
         }
@@ -54,11 +56,11 @@ public class RealTime {
         this.ess = ees;
     }
     public void update() throws IOException {
-       Ativo intc= ess.criarAtivo("INTC");
-       Ativo tsla= ess.criarAtivo("TSLA");
-       Ativo baba= ess.criarAtivo("BABA");
-       Ativo air =ess.criarAtivo("GOOG");
-       Ativo yhoo =ess.criarAtivo("NVDA");
+       Ativo intc= ess.criarAtivo("INTC",1);
+       Ativo tsla= ess.criarAtivo("TSLA",2);
+       Ativo baba= ess.criarAtivo("BABA",3);
+       Ativo air =ess.criarAtivo("GOOG",4);
+       Ativo yhoo =ess.criarAtivo("NVDA",5);
 
        UpdateAtivo up1 = new UpdateAtivo(ess,intc);
        UpdateAtivo up2 = new UpdateAtivo(ess,tsla);
