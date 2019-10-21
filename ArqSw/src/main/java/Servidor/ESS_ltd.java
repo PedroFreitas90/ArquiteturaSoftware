@@ -29,7 +29,7 @@ public class ESS_ltd {
 	}
 
 
-	public Utilizador iniciarSessao(String username, String password) throws UtilizadorInvalidoException {
+	public synchronized Utilizador iniciarSessao(String username, String password) throws UtilizadorInvalidoException {
 		Utilizador u = verficaUtilizador(username);
 		if (u != null) {
 			String pass = u.getPassword();
@@ -52,7 +52,7 @@ public class ESS_ltd {
 		}
 	}
 
-	public Utilizador verficaUtilizador(String nome) {
+	public synchronized Utilizador verficaUtilizador(String nome) {
 		Utilizador user = null;
 		for (Utilizador u : this.utilizadores.values()) {
 			if (u.getUsername().equals(nome)) {
@@ -93,8 +93,8 @@ public class ESS_ltd {
 			u.setPlafom(u.getPlafom() - valor_total);
 			this.utilizadores.put(u.getId(),u);
 			Contrato c = new Contrato(size, idAtivo, u.getId(), preco, takeprofit, stoploss, quantidade, false, false);
-			this.utilizadores.get(u.getId()).addContrato(c);//poe no portefolio
-			this.contratos.put(size, c);//poe na lista total de contratos
+            u.addContrato(c);//poe no portefolio
+            this.contratos.put(size, c);//poe na lista total de contratos
 		}
 	}
 
@@ -118,7 +118,7 @@ public class ESS_ltd {
 		}
 	}
 
-	public List<Contrato> listarPortefolio(Utilizador u) {
+	public synchronized List<Contrato> listarPortefolio(Utilizador u) {
 		List<Contrato> contratos = u.getPortefolio();
 		return contratos;
 	}
@@ -128,12 +128,13 @@ public class ESS_ltd {
 		List<Contrato> contratos = u.getPortefolio();
 		Contrato c = this.contratos.get(idContrato);
 			for( Contrato cc :contratos)
-				if(c!=null && c.equals(cc)) {
+				if(c!=null && c.getId()==cc.getId()) {
 					sucess=true;
 					if (c.isCompra())
-						fecharContratoCompra(u, c);
+						fecharContratoCompra(u, cc);
 					else
-						fecharContratoVenda(u, c);
+						fecharContratoVenda(u, cc);
+					return;
 				}
 			if(!sucess)
 			throw new ContratoInvalidoException("Este contrato nao existe ou nao pertence ao utilizador");
@@ -142,7 +143,7 @@ public class ESS_ltd {
 	}
 
 
-	public Ativo criarAtivo(String ativo,int id) throws IOException {
+	public synchronized Ativo criarAtivo(String ativo,int id) throws IOException {
 		float compra, venda;
 		Stock stock = YahooFinance.get(ativo);
 		BigDecimal precoVenda = stock.getQuote().getBid();
@@ -164,7 +165,7 @@ public class ESS_ltd {
 	}
 
 
-	public void fecharContratoCompra(Utilizador u, Contrato c) {
+	public synchronized void fecharContratoCompra(Utilizador u, Contrato c) {
 		int size = this.registos.size() + 1;
 		int id_ativo = c.getIdAtivo();
 		Ativo a = ativos.get(id_ativo).clone();// temos que ir ver o valor atual do ativo
@@ -180,7 +181,7 @@ public class ESS_ltd {
 	}
 
 
-	public void fecharContratoVenda(Utilizador u, Contrato c) {
+	public synchronized void fecharContratoVenda(Utilizador u, Contrato c) {
 		int size = this.registos.size() + 1;
 		int id_ativo = c.getIdAtivo();
 		Ativo a = ativos.get(id_ativo).clone();// temos que ir ver o valor atual do ativo
@@ -195,7 +196,7 @@ public class ESS_ltd {
 		this.contratos.put(c.getId(),c);
 	}
 
-	public List<Registo> listaRegistos(Utilizador u) {
+	public synchronized   List<Registo> listaRegistos(Utilizador u) {
 		List<Registo> registos = new ArrayList<>();
 
 		for (Registo r : this.registos.values())
@@ -204,7 +205,7 @@ public class ESS_ltd {
 		return registos;
 	}
 
-	public void fecharContratosComLimites(Ativo a) throws ContratoInvalidoException {
+	public synchronized void fecharContratosComLimites(Ativo a) throws ContratoInvalidoException {
 		Utilizador u = null;
 		float valor_atual;
 		for (Contrato c : this.contratos.values()) {
