@@ -7,7 +7,7 @@ import java.net.Socket;
 ;
 
 public class Servidor {
-    private static final int port = 9090;
+    private static final int port =4545;
 
     public static void main(String[] args) throws IOException, InterruptedException {
         ServerSocket srv = new ServerSocket(port);
