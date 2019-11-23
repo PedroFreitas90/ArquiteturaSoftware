@@ -53,7 +53,7 @@ public class RegistoDAO implements Map<Integer, Registo> {
     public synchronized Registo put(Integer key, Registo registo) {
         try{
             conn = Connect.connect();
-            PreparedStatement ps = conn.prepareStatement("DELETE FROM Registo WHERE idAtivo = ?");
+            PreparedStatement ps = conn.prepareStatement("DELETE FROM Registo WHERE idRegisto = ?");
             ps.setString(1,Integer.toString((Integer) key));
             ps.executeUpdate();
 
