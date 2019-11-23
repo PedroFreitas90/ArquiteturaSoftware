@@ -2,6 +2,7 @@ package DAOS;
 
 import Servidor.Contrato;
 
+
 import java.sql.*;
 import java.util.Collection;
 import java.util.HashSet;
@@ -206,4 +207,51 @@ public class ContratoDAO implements Map<Integer, Contrato> {
     public Set<Entry<Integer, Contrato>> entrySet() {
         return null;
     }
+
+    public  synchronized Contrato get(Object key, Object idUtilizador) {
+
+        Contrato c = new Contrato();
+        try{
+            conn = Connect.connect();
+            PreparedStatement ps = conn.prepareStatement("SELECT * FROM Contrato WHERE idContrato= ? AND idUtilizador= ?");
+            ps.setString(1,Integer.toString((Integer) key));
+            ps.setString(2,Integer.toString((Integer) idUtilizador));
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                c.setId(rs.getInt("idContrato"));
+                c.setIdAtivo(rs.getInt("idAtivo"));
+                c.setIdUtilizador(rs.getInt("idUtilizador"));
+                c.setPreco(rs.getInt("preco"));
+                c.setTakeProfit(rs.getLong("takeprofit"));
+                c.setStopLoss(rs.getLong("stoploss"));
+                c.setQuantidade(rs.getInt("quantidade"));
+                int compra = rs.getInt("compra");
+                if(compra==0)
+                    c.setCompra(false);
+                else
+                    c.setCompra(true);
+                int encerrado = rs.getInt("encerrado");
+                if(encerrado==0)
+                    c.setEncerrado(false);
+                else
+                    c.setEncerrado(true);
+
+            }
+            else c = null;
+        }
+        catch(SQLException e){
+            System.out.printf(e.getMessage());
+        }
+        finally{
+            try{
+                Connect.close(conn);
+            }
+            catch(Exception e){
+                System.out.printf(e.getMessage());
+            }
+        }
+        return c;
+
+    }
+
 }

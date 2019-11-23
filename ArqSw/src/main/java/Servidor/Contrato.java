@@ -2,8 +2,9 @@ package Servidor;
 
 import java.util.Objects;
 
-public class Contrato {
+public class Contrato implements Observer {
 
+	private ESS_ltd ess;
 	private int id;
 	private int idAtivo;
 	private int idUtilizador;
@@ -51,8 +52,11 @@ public class Contrato {
 		this.encerrado = false;
     }
 
+	public void setEss(ESS_ltd ess) {
+		this.ess = ess;
+	}
 
-    public int getId() {
+	public int getId() {
 		return id;
 	}
 
@@ -80,7 +84,7 @@ public class Contrato {
 		return preco;
 	}
 
-	public void setPreco(int preco) {
+	public void setPreco(float preco) {
 		this.preco = preco;
 	}
 
@@ -159,8 +163,20 @@ public class Contrato {
 				isEncerrado() == contrato.isEncerrado();
 	}
 
+
 	@Override
-	public int hashCode() {
-		return Objects.hash(getId(), getIdAtivo(), getIdUtilizador(), getPreco(), getTakeProfit(), getStopLoss(), getQuantidade(), isCompra(), isEncerrado());
+	public void update(Ativo a) {
+		float valorCompraAtual = a.getPrecoCompra();
+		float valorVendaAtual = a.getPrecoVenda();
+		try {
+				if (valorCompraAtual <= stopLoss|| valorCompraAtual >= takeProfit || valorVendaAtual <= stopLoss || valorVendaAtual >= takeProfit )
+						ess.fecharContratosComLimites(this);
+		} catch (ContratoInvalidoException e) {
+				e.printStackTrace();
+		  }
+
+
 	}
-}
+
+
+	}

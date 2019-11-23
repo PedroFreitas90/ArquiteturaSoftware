@@ -1,6 +1,8 @@
 package DAOS;
 
 import Servidor.Contrato;
+import Servidor.Estado;
+import Servidor.Pedido;
 import Servidor.Utilizador;
 
 import java.sql.Connection;
@@ -18,16 +20,25 @@ public class UtilizadorDAO implements Map<Integer, Utilizador> {
     @Override
     public synchronized int size() {
         int i = 0;
+        Statement stm = null;
+        ResultSet rs = null;
         try {
             conn = Connect.connect();
-            Statement stm = conn.createStatement();
-            ResultSet rs = stm.executeQuery("SELECT * FROM Utilizador");
+            stm = conn.createStatement();
+            rs = stm.executeQuery("SELECT * FROM Utilizador");
             for (; rs.next(); i++) ;
 
         } catch (SQLException e) {
             throw new NullPointerException(e.getMessage());
         } finally {
-            Connect.close(conn);
+            try {
+                stm.close();
+                rs.close();
+                Connect.close(conn);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
         }
         return i;
     }
@@ -51,51 +62,30 @@ public class UtilizadorDAO implements Map<Integer, Utilizador> {
     public synchronized Utilizador get(Object key) {
 
         Utilizador u = new Utilizador();
-        List<Contrato> contratos = new ArrayList<>();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
         try {
             conn = Connect.connect();
-            PreparedStatement ps = conn.prepareStatement("SELECT * FROM Utilizador WHERE idUtilizador= ?");
+            ps = conn.prepareStatement("SELECT * FROM Utilizador WHERE idUtilizador= ?");
             ps.setString(1, Integer.toString((Integer) key));
-            ResultSet rs = ps.executeQuery();
+            rs = ps.executeQuery();
             if (rs.next()) {
-                u.setId(rs.getInt("Utilizador.idUtlizador"));
+                u.setId(rs.getInt("idUtlizador"));
                 u.setUsername(rs.getNString("username"));
                 u.setUsername(rs.getNString("password"));
                 u.setPlafom(rs.getLong("plafom"));
-             PreparedStatement   pa = conn.prepareStatement("SELECT * FROM Contrato WHERE idUtilizador= ?");
-                pa.setString(1, Integer.toString((Integer) key));
-                ResultSet ra = pa.executeQuery();
-                if (ra.next()) {
-                    Contrato c = new Contrato();
-                    c.setId(ra.getInt("idContrato"));
-                    c.setIdAtivo(ra.getInt("idAtivo"));
-                    c.setIdUtilizador(ra.getInt("Utilizador.idUtlizador"));
-                    c.setPreco(ra.getInt("preco"));
-                    c.setTakeProfit(ra.getLong("takeprofit"));
-                    c.setStopLoss(ra.getLong("stoploss"));
-                    c.setQuantidade(ra.getInt("quantidade"));
-                    int compra = ra.getInt("compra");
-                    if (compra == 0)
-                        c.setCompra(false);
-                    else
-                        c.setCompra(true);
-                    int encerrado = ra.getInt("encerrado");
-                    if (encerrado == 0)
-                        c.setEncerrado(false);
-                    else
-                        c.setEncerrado(true);
-                    contratos.add(c);
-
-                }
-            } else u = null;
-            u.setPortefolio(contratos);
+            }
+            else u = null;
         } catch (SQLException e) {
             System.out.printf(e.getMessage());
         } finally {
             try {
+                ps.close();
+                rs.close();
                 Connect.close(conn);
-            } catch (Exception e) {
-                System.out.printf(e.getMessage());
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
         return u;
@@ -103,10 +93,11 @@ public class UtilizadorDAO implements Map<Integer, Utilizador> {
     }
 
     @Override
-    public synchronized Utilizador put(Integer key, Utilizador utilizador) {
+    public  Utilizador put(Integer key, Utilizador utilizador) {
+        PreparedStatement ps = null;
         try {
             conn = Connect.connect();
-            PreparedStatement ps = conn.prepareStatement("DELETE FROM Utilizador WHERE idUtilizador = ?");
+            ps = conn.prepareStatement("DELETE FROM Utilizador WHERE idUtilizador = ?");
             ps.setString(1,Integer.toString((Integer) key));
             ps.executeUpdate();
             ps = conn.prepareStatement("INSERT INTO Utilizador (IdUtilizador,username,password,plafom) VALUES (?,?,?,?)");
@@ -119,6 +110,7 @@ public class UtilizadorDAO implements Map<Integer, Utilizador> {
             System.out.printf(e.getMessage());
         } finally {
             try {
+                ps.close();
                 Connect.close(conn);
 
             } catch (Exception e) {
@@ -152,21 +144,33 @@ public class UtilizadorDAO implements Map<Integer, Utilizador> {
     @Override
     public synchronized Collection<Utilizador> values() {
         Collection<Utilizador> col = new HashSet<Utilizador>();
+        PreparedStatement stm = null;
+        ResultSet rs = null;
         try {
             conn = Connect.connect();
-            Statement stm = conn.createStatement();
-            ResultSet rs = stm.executeQuery("SELECT * FROM Utilizador");
+            System.out.println(conn.isClosed());
+            stm = conn.prepareStatement("SELECT * FROM Utilizador");
+             rs = stm.executeQuery();
             for (; rs.next(); ) {
                 Utilizador u = new Utilizador(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getLong(4));
-                List<Contrato> c =contratosUtilizador(rs.getInt(1));
-                u.setPortefolio(c);
+                List<Pedido.Memento> mementos = mementosUtilizador(rs.getInt(1));
+              u.setPedidosSave(mementos);
+
                 col.add(u);
             }
 
         } catch (SQLException e) {
-            throw new NullPointerException(e.getMessage());
+            System.out.println("nao fez a query");
+            throw new NullPointerException("nao fez a query");
         } finally {
-            Connect.close(conn);
+            try {
+                stm.close();
+                rs.close();
+                Connect.close(conn);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
         }
 
 
@@ -179,14 +183,16 @@ public class UtilizadorDAO implements Map<Integer, Utilizador> {
     }
 
 
-    public synchronized List<Contrato> contratosUtilizador(int id) {
+    public  List<Contrato> contratosUtilizador(int id) {
         List<Contrato> contratos = new ArrayList<>();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
         try {
             conn = Connect.connect();
 
-            PreparedStatement ps = conn.prepareStatement("SELECT * FROM Contrato WHERE idUtilizador= ?");
+             ps = conn.prepareStatement("SELECT * FROM Contrato WHERE idUtilizador= ?");
             ps.setString(1, Integer.toString( id));
-            ResultSet rs = ps.executeQuery();
+             rs = ps.executeQuery();
             for (; rs.next(); )  {
                 Contrato c = new Contrato();
                 c.setId(rs.getInt("idContrato"));
@@ -212,8 +218,57 @@ public class UtilizadorDAO implements Map<Integer, Utilizador> {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            Connect.close(conn);
+            try {
+                ps.close();
+                rs.close();
+                Connect.close(conn);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
         }
         return contratos;
     }
+
+
+    public  List<Pedido.Memento> mementosUtilizador(int id){
+        List<Pedido.Memento> mementos = new ArrayList<>();
+        PreparedStatement ps =null;
+        ResultSet rs = null;
+        try {
+            conn = Connect.connect();
+
+            ps = conn.prepareStatement("SELECT * FROM Pedido WHERE idUtilizador= ? AND estado= 0" );
+            ps.setString(1, Integer.toString( id));
+            rs = ps.executeQuery();
+            Pedido p = new Pedido();
+            for (; rs.next(); )  {
+                String descricao = rs.getString("descricao");
+                int estado = rs.getInt("estado");
+                int idPedido = rs.getInt("idPedido");
+                int idUtilizador = rs.getInt("idUtilizador");
+                Estado e = null;
+                if (estado == 0)
+                    e  =  new Estado(descricao,false,idPedido,idUtilizador);
+
+                else
+                    e  =  new Estado(descricao,true,idPedido,idUtilizador);
+                p.set(e);
+                mementos.add(p.saveToMemento());
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                ps.close();
+                rs.close();
+                Connect.close(conn);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return mementos;
+    }
+
 }

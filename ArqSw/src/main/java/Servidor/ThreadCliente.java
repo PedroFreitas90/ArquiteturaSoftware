@@ -26,14 +26,42 @@ public class ThreadCliente extends Thread {
 
    public  void run(){
        String pedido;
-        try{
-       while((pedido = in.readLine()) != null) {
-                   String resposta=  interpretaPedido(pedido);
-                   out.println(resposta);
-        }
-           } catch (IOException e) {
+       try{
+
+         while((pedido = in.readLine()) != null) {
+                String [] campos;
+                campos = pedido.split(" ");
+                System.out.println(pedido);
+                if(!(campos[0].equals("SESSAO") || campos[0].equals("REGISTAR"))){
+                        int size = ess.sizePedidos()+1;
+                        Pedido p = new Pedido();
+                        p.set(pedido,false,size,user.getId());
+                        ess.updateEstadoPedido(p);
+                        user.setPedido(p);
+
+
+                        proximoPedido();// adicionar o peido
+
+                }
+           //Caso Seja LOGIN
+                else {
+                    String resposta = interpretaPedido(pedido);
+                    out.println(resposta);
+               // enviar todos os pedidos pendentes
+                    if(user!=null) {
+                        int tamanho = user.getPedidosSave().size();
+                        int i = 0;
+                        while (i < tamanho) {
+                            out.println("O servidor foi abaixo mas o seus pedidos foram salvos\n Iremos responder a todos exceto à compra/venda de ativos");
+                            proximoPedido();
+                            i++;
+                        }
+                    }
+                }
+         }
+       } catch (IOException e) {
                e.printStackTrace();
-           }
+        }
 
        }
 
@@ -60,8 +88,10 @@ public class ThreadCliente extends Thread {
                         return fecharContrato(campos[1]);
                 case "REGISTOS":
                         return verRegistos();
+                case "TERMINAR":
+                        return terminarSessao();
                 default:
-                    return  "NAO É UM COMANDO VÁLIDO";
+                    return pedido + " NAO É UM COMANDO VÁLIDO";
 
             }
 
@@ -204,6 +234,27 @@ public class ThreadCliente extends Thread {
 
     }
 
+    public String terminarSessao(){
+       this.user=null;
+       return "TERMINADA";
+    }
+
+
+    public void proximoPedido() {
+        if (user != null) {
+            Pedido p = user.getPedidoAtual();
+            if (p != null) {
+                String req = p.getEstado().getPedido();
+                String resposta = interpretaPedido(req);
+                out.println(resposta);
+                if (!req.equals("TERMINAR")) {
+                    user.pedidoFinalizado();
+                }
+                p.getEstado().setEstado(true);
+                this.ess.updateEstadoPedido(p);
+            }
+        }
+    }
     }
 
 

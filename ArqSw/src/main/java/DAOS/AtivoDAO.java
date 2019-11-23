@@ -1,13 +1,10 @@
 package DAOS;
 
-import Servidor.Ativo;
-import Servidor.Utilizador;
+import Servidor.*;
+import Servidor.Observer;
 
 import java.sql.*;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class AtivoDAO implements Map<Integer, Ativo> {
 
@@ -15,16 +12,25 @@ public class AtivoDAO implements Map<Integer, Ativo> {
     @Override
     public synchronized int size() {
         int i = 0;
+        Statement stm = null;
+        ResultSet rs= null;
         try {
             conn = Connect.connect();
-            Statement stm = conn.createStatement();
-            ResultSet rs = stm.executeQuery("SELECT * FROM Ativo");
+            stm = conn.createStatement();
+            rs = stm.executeQuery("SELECT * FROM Ativo");
             for (;rs.next();i++);
 
         }catch(SQLException e){
             throw new NullPointerException(e.getMessage());
         }finally {
-            Connect.close(conn);
+            try {
+                stm.close();
+                rs.close();
+                Connect.close(conn);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
         }
         return i;
 
@@ -38,19 +44,27 @@ public class AtivoDAO implements Map<Integer, Ativo> {
     @Override
     public boolean containsKey(Object key) {
         boolean res = false;
-
+        PreparedStatement ps= null;
+        ResultSet rs=null;
         try{
             conn = Connect.connect();
-            PreparedStatement ps = conn.prepareStatement("SELECT * FROM Ativo WHERE descricao = ?");
+            ps = conn.prepareStatement("SELECT * FROM Ativo WHERE descricao = ?");
             ps.setString(1, (String) key);
-            ResultSet rs = ps.executeQuery();
+            rs = ps.executeQuery();
             res = rs.next();
         }catch (SQLException e){
             System.out.println(e.getMessage());
         }
         finally {
             try {
-                Connect.close(conn);
+                try {
+                    ps.close();
+                    rs.close();
+                    Connect.close(conn);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
             }
             catch (Exception e){
                 System.out.println(e.getMessage());
@@ -76,13 +90,14 @@ public class AtivoDAO implements Map<Integer, Ativo> {
 
     @Override
     public Ativo get(Object key) {
-
+        PreparedStatement ps = null;
+        ResultSet rs = null;
         Ativo a = new Ativo();
         try{
             conn = Connect.connect();
-            PreparedStatement ps = conn.prepareStatement("SELECT * FROM Ativo WHERE idAtivo= ?");
+            ps = conn.prepareStatement("SELECT * FROM Ativo WHERE idAtivo= ?");
             ps.setString(1,Integer.toString((Integer) key));
-            ResultSet rs = ps.executeQuery();
+            rs = ps.executeQuery();
             if(rs.next()){
                 a.setId(rs.getInt("idAtivo"));
                 a.setPrecoCompra(rs.getFloat("precoCompra"));
@@ -95,22 +110,26 @@ public class AtivoDAO implements Map<Integer, Ativo> {
             System.out.printf(e.getMessage());
         }
         finally{
-            try{
+            try {
+                ps.close();
+                rs.close();
                 Connect.close(conn);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-            catch(Exception e){
-                System.out.printf(e.getMessage());
-            }
+
         }
         return a;
 
     }
 
+
     @Override
     public synchronized Ativo put(Integer key, Ativo ativo) {
+        PreparedStatement ps = null;
         try{
             conn = Connect.connect();
-            PreparedStatement ps = conn.prepareStatement("DELETE FROM Ativo WHERE idAtivo = ?");
+            ps = conn.prepareStatement("DELETE FROM Ativo WHERE idAtivo = ?");
             ps.setString(1,Integer.toString((Integer) key));
             ps.executeUpdate();
 
@@ -120,18 +139,22 @@ public class AtivoDAO implements Map<Integer, Ativo> {
             ps.setString(3, Float.toString(ativo.getPrecoCompra()));
             ps.setString(4, ativo.getDescricao());
             ps.executeUpdate();
+
+
         }
         catch(SQLException e){
             System.out.printf(e.getMessage());
         }
         finally{
-            try{
+            try {
+                ps.close();
                 Connect.close(conn);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
 
-            }
-            catch(Exception e){
-                System.out.printf(e.getMessage());
-            }
+
+
         }
         return ativo;
     }
@@ -159,10 +182,13 @@ public class AtivoDAO implements Map<Integer, Ativo> {
     @Override
     public synchronized Collection<Ativo> values() {
         Collection<Ativo> col = new HashSet<Ativo>();
+        Statement stm = null;
+        ResultSet rs = null;
+
         try {
             conn = Connect.connect();
-            Statement stm = conn.createStatement();
-            ResultSet rs = stm.executeQuery("SELECT * FROM Ativo");
+            stm = conn.createStatement();
+            rs = stm.executeQuery("SELECT * FROM Ativo");
             for (;rs.next();) {
                 col.add(
                         new Ativo(rs.getInt(1),rs.getFloat(2),rs.getFloat(3),rs.getString(4))
@@ -172,7 +198,14 @@ public class AtivoDAO implements Map<Integer, Ativo> {
         }catch(SQLException e){
             throw new NullPointerException(e.getMessage());
         }finally {
-            Connect.close(conn);
+            try {
+                stm.close();
+                rs.close();
+                Connect.close(conn);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
         }
 
 
@@ -183,5 +216,99 @@ public class AtivoDAO implements Map<Integer, Ativo> {
     @Override
     public Set<Entry<Integer, Ativo>> entrySet() {
         return null;
+    }
+
+
+
+    public synchronized Ativo get(Object descricao, Object ess){
+        PreparedStatement ps = null;
+        PreparedStatement cc = null;
+        PreparedStatement cv = null;
+
+        ResultSet rs = null;
+        ResultSet c = null;
+        ResultSet k = null;
+        Ativo a = new Ativo();
+        try{
+            conn = Connect.connect();
+            ps = conn.prepareStatement("SELECT * FROM Ativo WHERE descricao= ?");
+            ps.setString(1, (String) descricao);
+            rs = ps.executeQuery();
+
+            if(rs.next()){
+                a.setId(rs.getInt("idAtivo"));
+                a.setPrecoCompra(rs.getFloat("precoCompra"));
+                a.setPrecoVenda(rs.getFloat("precoVenda"));
+                a.setDescricao(rs.getString("descricao"));
+            }
+            List<Observer> contratosCompra = new ArrayList<>();
+            cc = conn.prepareStatement("SELECT * FROM Contrato WHERE idAtivo = ? AND compra = 1 AND encerrado = 0");
+            cc.setString(1,Integer.toString((Integer) rs.getInt("idAtivo")));
+            c = cc.executeQuery();
+
+            while(c.next()) {
+                Contrato contrato = new Contrato();
+                contrato.setId(c.getInt("idContrato"));
+                contrato.setIdAtivo(c.getInt("idAtivo"));
+                contrato.setIdUtilizador(c.getInt("idUtilizador"));
+                contrato.setPreco(c.getFloat("preco"));
+                contrato.setTakeProfit(c.getFloat("takeprofit"));
+                contrato.setStopLoss(c.getFloat("stoploss"));
+                contrato.setQuantidade(c.getInt("quantidade"));
+                int compra = c.getInt("compra");
+                if(compra==0)
+                    contrato.setCompra(false);
+                else
+                    contrato.setCompra(true);
+                int encerrado = c.getInt("encerrado");
+                if(encerrado==0)
+                    contrato.setEncerrado(false);
+                else
+                    contrato.setEncerrado(true);
+                contrato.setEss((ESS_ltd) ess);
+                contratosCompra.add(contrato);
+            }
+
+            a.setObservers_ContratoCompra(contratosCompra);
+
+            List<Observer> contratosVenda = new ArrayList<>();
+            cv = conn.prepareStatement("SELECT * FROM Contrato WHERE idAtivo = ? AND compra = 0 AND encerrado = 0");
+            cv.setString(1,Integer.toString((Integer) rs.getInt("idAtivo")));
+            k = cv.executeQuery();
+
+            while(k.next()) {
+                Contrato contrato = new Contrato();
+                contrato.setId(k.getInt("idContrato"));
+                contrato.setIdAtivo(k.getInt("idAtivo"));
+                contrato.setIdUtilizador(k.getInt("idUtilizador"));
+                contrato.setPreco(k.getFloat("preco"));
+                contrato.setTakeProfit(k.getFloat("takeprofit"));
+                contrato.setStopLoss(k.getFloat("stoploss"));
+                contrato.setQuantidade(k.getInt("quantidade"));
+                int compra = k.getInt("compra");
+                if(compra==0)
+                    contrato.setCompra(false);
+                else
+                    contrato.setCompra(true);
+                int encerrado = k.getInt("encerrado");
+                if(encerrado==0)
+                    contrato.setEncerrado(false);
+                else
+                    contrato.setEncerrado(true);
+                contrato.setEss((ESS_ltd)ess);
+                contratosVenda.add(contrato);
+            }
+
+            a.setObservers_ContratoVenda(contratosVenda);
+
+        }
+        catch(SQLException e){
+            System.out.printf(e.getMessage());
+        }
+        finally{
+            Connect.close(conn);
+
+        }
+        return a;
     }
 }

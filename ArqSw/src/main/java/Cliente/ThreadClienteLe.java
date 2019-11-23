@@ -5,13 +5,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
-public class ThreadClienteLe {
+public class ThreadClienteLe implements Runnable {
     private Socket cliente;
     private BufferedReader in;
+    private App aplicacao;
 
-    public ThreadClienteLe(Socket s) throws IOException {
+    public ThreadClienteLe(Socket s,App app)  throws IOException {
         this.cliente = s;
         this.in = new BufferedReader(new InputStreamReader(cliente.getInputStream()));
+        this.aplicacao=app;
     }
 
     public String leResposta() {
@@ -24,6 +26,24 @@ public class ThreadClienteLe {
             e.printStackTrace();
         }
         return resposta;
+    }
+
+    public void run(){
+        String resposta = null;
+
+        try {
+            while((resposta = in.readLine()) != null){
+                System.out.println(resposta);
+                    if(resposta.equals("TERMINADA"))
+                        break;
+
+               // this.aplicacao.mostraMenu();
+            }
+
+            } catch (IOException e) {
+            e.printStackTrace();
+            }
+
     }
 }
 

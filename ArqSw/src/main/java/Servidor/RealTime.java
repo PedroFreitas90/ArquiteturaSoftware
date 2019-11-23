@@ -9,19 +9,21 @@ import java.math.BigDecimal;
 class UpdateAtivo extends Thread{
 
     private ESS_ltd ess ;
-    private Ativo ativo;
+    private String nomeAtivo;
 
-    public UpdateAtivo(ESS_ltd ess,Ativo ativo) {
+    public UpdateAtivo(ESS_ltd ess,String nomeAtivo) {
         this.ess = ess;
-        this.ativo = ativo;
+        this.nomeAtivo=nomeAtivo;
     }
         public void run(){
+        Ativo ativo;
             try {
+                System.out.println("eu sou a thread "+Thread.activeCount());
         while(true) {
-            sleep(2);
+            ativo=ess.getAtivo(nomeAtivo);
             float compra,venda;
             Stock stock = null;
-            stock = YahooFinance.get(ativo.getDescricao());
+            stock = YahooFinance.get(nomeAtivo);
             BigDecimal precoVenda = stock.getQuote().getBid();
             BigDecimal precoCompra = stock.getQuote().getAsk();
             if(precoCompra!=null)
@@ -33,14 +35,12 @@ class UpdateAtivo extends Thread{
             else
                 venda=0;
 
-            ativo.setPrecoCompra(compra);
-            ativo.setPrecoVenda(venda);
-            ess.criarAtivo(ativo.getDescricao(),ativo.getId());
-
-            ess.fecharContratosComLimites(ativo);
+            ativo.setValores(venda,compra);
+            ess.getAtivos().put(ativo.getId(),ativo);
+            sleep(2000);
 
         }
-        } catch (IOException | InterruptedException | ContratoInvalidoException e) {
+        } catch (IOException | InterruptedException e) {
                     e.printStackTrace();
                 }
 
@@ -56,17 +56,17 @@ public class RealTime {
         this.ess = ees;
     }
     public void update() throws IOException {
-       Ativo intc= ess.criarAtivo("INTC",1);
-       Ativo tsla= ess.criarAtivo("TSLA",2);
-       Ativo baba= ess.criarAtivo("BABA",3);
-       Ativo air =ess.criarAtivo("GOOG",4);
-       Ativo yhoo =ess.criarAtivo("NVDA",5);
+       ess.criarAtivo("INTC",1);
+       ess.criarAtivo("TSLA",2);
+       ess.criarAtivo("BABA",3);
+       ess.criarAtivo("GOOG",4);
+       ess.criarAtivo("NVDA",5);
 
-       UpdateAtivo up1 = new UpdateAtivo(ess,intc);
-       UpdateAtivo up2 = new UpdateAtivo(ess,tsla);
-       UpdateAtivo up3 = new UpdateAtivo(ess,baba);
-       UpdateAtivo up4 = new UpdateAtivo(ess,air);
-       UpdateAtivo up5 = new UpdateAtivo(ess,yhoo);
+       UpdateAtivo up1 = new UpdateAtivo(ess,"INTC");
+       UpdateAtivo up2 = new UpdateAtivo(ess,"TSLA");
+       UpdateAtivo up3 = new UpdateAtivo(ess,"BABA");
+       UpdateAtivo up4 = new UpdateAtivo(ess,"GOOG");
+       UpdateAtivo up5 = new UpdateAtivo(ess,"NVDA");
        up1.start();
        up2.start();
        up3.start();
@@ -76,7 +76,8 @@ public class RealTime {
     }
 
 
-
+// Alteracao no metodo UpdateAtivo porque temos que instanciar ESS_ltd no contrato e estes sao instanciados como Observers no ativo
+    // logo é preciso ir ao DAO para associar ESS_ltd aos contratos
 
 
     }

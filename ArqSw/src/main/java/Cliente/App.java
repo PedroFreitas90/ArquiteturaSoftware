@@ -20,10 +20,12 @@ public class App {
         this.logado=false;
         menu=  new Menu();
         escreve=new ThreadClienteEscreve(s);
-        le=new ThreadClienteLe(s);
+        le=new ThreadClienteLe(s,this);
         teclado= new BufferedReader(new InputStreamReader(System.in));
         cliente=s;
     }
+
+
 
 
     public void mostraMenu(){
@@ -67,7 +69,9 @@ public class App {
                     verRegistos();
                     break;
             }
-        } catch (IOException e) {
+            Thread.sleep(1000);
+            mostraMenu();
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -81,12 +85,17 @@ public class App {
                         break;
                     case 1 :
                         login();
+                        Thread.sleep(1000);
+                        mostraMenu();
                         break;
                     case 2:
                         registo_input();
+                        Thread.sleep(1000);
+                        mostraMenu();
                         break;
                 }
-        } catch (IOException e) {
+
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
 
@@ -111,7 +120,9 @@ public class App {
         escreve.addPedido(sb.toString());
         String resposta= le.leResposta();
         System.out.println(resposta);
-        mostraMenu();
+
+
+
 
     }
 
@@ -131,29 +142,36 @@ public class App {
         escreve.addPedido(sb.toString());
       String resposta= le.leResposta();
       System.out.println(resposta);
-      if(resposta.equals("SUCESSO"))
-          this.logado=true;
-      mostraMenu();
+      if(resposta.equals("SUCESSO")) {
+          this.logado = true;
+          Thread t = new Thread(le);
+        t.start();
+      }
+
     }
 
     public void fecharApp() throws IOException {
         logado=false;
         cliente.close();
+
     }
 
-    public void  terminaSessao(){
+    public void  terminaSessao() throws InterruptedException {
         logado=false;
-        mostraMenu();
+        StringBuilder sb = new StringBuilder();
+        String pedido = "TERMINAR";
+        sb=sb.append(pedido);
+        escreve.addPedido(sb.toString());
+
+
     }
 
-    public void consultar_Saldo(){
+    public void consultar_Saldo() throws InterruptedException {
         StringBuilder sb = new StringBuilder();
         String pedido = "SALDO";
         sb=sb.append(pedido);
         escreve.addPedido(sb.toString());
-        String resposta= le.leResposta();
-        System.out.println(resposta);
-        mostraMenu();
+
     }
 
     public void listaAtivos(){
@@ -161,9 +179,7 @@ public class App {
         String pedido = "LISTARATIVOS";
         sb=sb.append(pedido);
         escreve.addPedido(sb.toString());
-        String resposta= le.leResposta();
-        System.out.println(resposta);
-        mostraMenu();
+
     }
 
     public void venderContrato() throws IOException {
@@ -188,9 +204,6 @@ public class App {
         sb.append(quantidade);
         sb.append(" ");
         escreve.addPedido(sb.toString());
-        String resposta= le.leResposta();
-        System.out.println(resposta);
-        mostraMenu();
     }
 
     public void comprarContrato() throws IOException {
@@ -215,20 +228,15 @@ public class App {
         sb.append(quantidade);
         sb.append(" ");
         escreve.addPedido(sb.toString());
-        String resposta= le.leResposta();
-        System.out.println(resposta);
-        mostraMenu();
+
 
     }
 
-    public void verPortefolio(){
+    public void verPortefolio()  {
         StringBuilder sb = new StringBuilder();
         String pedido = "PORTEFOLIO";
-        sb=sb.append(pedido);
+        sb = sb.append(pedido);
         escreve.addPedido(sb.toString());
-        String resposta= le.leResposta();
-        System.out.println(resposta);
-        mostraMenu();
     }
 
     public void fecharContrato() throws IOException {
@@ -241,18 +249,13 @@ public class App {
         sb.append(idContrato);
         sb.append(" ");
         escreve.addPedido(sb.toString());
-        String resposta= le.leResposta();
-        System.out.println(resposta);
-        mostraMenu();
+
     }
     public void verRegistos() {
         StringBuilder sb = new StringBuilder();
         String pedido = "REGISTOS";
         sb = sb.append(pedido);
         escreve.addPedido(sb.toString());
-        String resposta = le.leResposta();
-        System.out.println(resposta);
-        mostraMenu();
     }
 
 }
