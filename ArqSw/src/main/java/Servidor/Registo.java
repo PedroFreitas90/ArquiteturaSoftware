@@ -59,12 +59,12 @@ public class Registo {
 
 	@Override
 	public String toString() {
-		return "Registo{" +
-				"id=" + id +
-				", idUtilizador=" + idUtilizador +
-				", idAtivo=" + idAtivo +
-				", lucro=" + lucro +
-				", quantidade=" + quantidade +
-				'}';
+		return  "********************************"+
+				"\n id=" + id +
+				"\n idUtilizador=" + idUtilizador +
+				"\n idAtivo=" + idAtivo +
+				"\n lucro=" + lucro +
+				"\n quantidade=" + quantidade +
+				"\n********************************";
 	}
 }

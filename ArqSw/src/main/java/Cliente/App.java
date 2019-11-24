@@ -69,7 +69,7 @@ public class App {
                     verRegistos();
                     break;
             }
-            Thread.sleep(1000);
+            Thread.sleep(2000);
             mostraMenu();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();

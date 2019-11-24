@@ -34,13 +34,14 @@ public class ThreadCliente extends Thread {
                 System.out.println(pedido);
                 if(!(campos[0].equals("SESSAO") || campos[0].equals("REGISTAR"))){
                         int size = ess.sizePedidos()+1;
+                        System.out.println("tamanho dos pedidos "+ size );
                         Pedido p = new Pedido();
                         p.set(pedido,false,size,user.getId());
                         ess.updateEstadoPedido(p);
                         user.setPedido(p);
 
 
-                        proximoPedido();// adicionar o peido
+                        proximoPedido();
 
                 }
            //Caso Seja LOGIN
@@ -51,8 +52,9 @@ public class ThreadCliente extends Thread {
                     if(user!=null) {
                         int tamanho = user.getPedidosSave().size();
                         int i = 0;
+                        if(tamanho>0)
+                        out.println("O servidor foi abaixo mas o seus pedidos foram salvos\n.");
                         while (i < tamanho) {
-                            out.println("O servidor foi abaixo mas o seus pedidos foram salvos\n Iremos responder a todos exceto à compra/venda de ativos");
                             proximoPedido();
                             i++;
                         }
@@ -139,11 +141,12 @@ public class ThreadCliente extends Thread {
        public String saldo_utilizador(Utilizador u){
             float saldo= ess.saldo(u);
             String plafom = Float.toString(saldo);
-            return plafom;
+            return  "O seu saldo : "+ plafom;
        }
        public String lista_Ativos(){
             List<Ativo> ativos = ess.listarAtivos();
             StringBuilder sb = new StringBuilder();
+            sb.append("  Idenficação  | Nome  | preco de compra  | preco de um venda\n");
             for(Ativo a : ativos) {
                 sb.append(a);
                 sb.append(" ");
@@ -200,9 +203,10 @@ public class ThreadCliente extends Thread {
     public String verPortefolio(){
        List<Contrato> contratos= ess.listarPortefolio(this.user);
         StringBuilder sb = new StringBuilder();
+        sb.append("         PORTEFOLIO         \n");
         for(Contrato c : contratos) {
             sb.append(c);
-            sb.append(" ");
+            sb.append("\n");
         }
         return sb.toString();
     }
@@ -226,9 +230,10 @@ public class ThreadCliente extends Thread {
     public String verRegistos(){
         List<Registo> registos = ess.listaRegistos(this.user);
         StringBuilder sb = new StringBuilder();
+        sb.append("         REGISTOS         \n");
         for(Registo r : registos) {
             sb.append(r);
-            sb.append(" ");
+            sb.append("\n");
         }
         return sb.toString();
 

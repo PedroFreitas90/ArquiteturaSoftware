@@ -89,7 +89,7 @@ public class AtivoDAO implements Map<Integer, Ativo> {
     }
 
     @Override
-    public Ativo get(Object key) {
+    public synchronized Ativo get(Object key) {
         PreparedStatement ps = null;
         ResultSet rs = null;
         Ativo a = new Ativo();

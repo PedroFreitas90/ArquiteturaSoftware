@@ -134,17 +134,17 @@ public class Contrato implements Observer {
 
 	@Override
 	public String toString() {
-		return "Contrato{" +
-				"id=" + id +
-				", idAtivo=" + idAtivo +
-				", idUtilizador=" + idUtilizador +
-				", preco=" + preco +
-				", takeProfit=" + takeProfit +
-				", stopLess=" + stopLoss +
-				", quantidade=" + quantidade +
-				", compra=" + compra +
-				", encerrado=" + encerrado +
-				'}';
+		return  "**********************************"+
+				"\n id=" + id +
+				"\n idAtivo=" + idAtivo +
+				"\n idUtilizador=" + idUtilizador +
+				"\n preco=" + preco +
+				"\n takeProfit=" + takeProfit +
+				"\n stopLess=" + stopLoss +
+				"\n quantidade=" + quantidade +
+				"\n compra=" + compra +
+				"\n encerrado=" + encerrado +
+				"\n**********************************";
 	}
 
 	@Override
@@ -169,8 +169,13 @@ public class Contrato implements Observer {
 		float valorCompraAtual = a.getPrecoCompra();
 		float valorVendaAtual = a.getPrecoVenda();
 		try {
-				if (valorCompraAtual <= stopLoss|| valorCompraAtual >= takeProfit || valorVendaAtual <= stopLoss || valorVendaAtual >= takeProfit )
-						ess.fecharContratosComLimites(this);
+			if(compra) {
+				if (valorCompraAtual <= stopLoss || valorCompraAtual >= takeProfit)
+					ess.fecharContratosComLimites(this);
+			}
+			else
+				if(valorVendaAtual >= stopLoss || valorVendaAtual <= takeProfit)
+					ess.fecharContratosComLimites(this);
 		} catch (ContratoInvalidoException e) {
 				e.printStackTrace();
 		  }

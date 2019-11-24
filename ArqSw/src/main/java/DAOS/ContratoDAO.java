@@ -162,7 +162,7 @@ public class ContratoDAO implements Map<Integer, Contrato> {
         try {
             conn = Connect.connect();
             Statement stm = conn.createStatement();
-            ResultSet rs = stm.executeQuery("SELECT * FROM Contrato");
+            ResultSet rs = stm.executeQuery("SELECT * FROM Contrato where encerrado = 0");
             for (;rs.next();) {
                 Contrato c = new Contrato();
                 c.setId(rs.getInt("idContrato"));

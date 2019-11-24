@@ -89,12 +89,7 @@ public class Ativo implements Subject {
 
 	@Override
 	public String toString() {
-		return "Ativo{" +
-				"id=" + id +
-				", precoVenda=" + precoVenda +
-				", precoCompra=" + precoCompra +
-				", descricao='" + descricao + '\'' +
-				'}';
+		return " " + id + "  | " + precoVenda + "  | " + precoCompra + "  | " + descricao + "\n";
 	}
 
 	@Override
@@ -188,4 +183,7 @@ public class Ativo implements Subject {
     public void setObservers_Utilizadores(ArrayList<Observer> observers_Utilizadores) {
         this.observers_Utilizadores = observers_Utilizadores;
     }
+
+
+
 }

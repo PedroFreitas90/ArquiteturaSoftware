@@ -11,7 +11,7 @@ public class PedidoDAO implements Map<Integer, Pedido> {
 
     private Connection conn;
     @Override
-    public int size() {
+    public synchronized int size() {
         int i = 0;
         Statement stm = null;
         ResultSet rs = null;

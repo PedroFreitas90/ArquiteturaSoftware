@@ -71,9 +71,9 @@ public class UtilizadorDAO implements Map<Integer, Utilizador> {
             ps.setString(1, Integer.toString((Integer) key));
             rs = ps.executeQuery();
             if (rs.next()) {
-                u.setId(rs.getInt("idUtlizador"));
-                u.setUsername(rs.getNString("username"));
-                u.setUsername(rs.getNString("password"));
+                u.setId((Integer)key);
+                u.setUsername(rs.getString(2));
+                u.setPassword(rs.getString(3));
                 u.setPlafom(rs.getLong("plafom"));
             }
             else u = null;
@@ -93,7 +93,7 @@ public class UtilizadorDAO implements Map<Integer, Utilizador> {
     }
 
     @Override
-    public  Utilizador put(Integer key, Utilizador utilizador) {
+    public synchronized   Utilizador put(Integer key, Utilizador utilizador) {
         PreparedStatement ps = null;
         try {
             conn = Connect.connect();
