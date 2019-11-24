@@ -241,7 +241,7 @@ public class AtivoDAO implements Map<Integer, Ativo> {
                 a.setPrecoVenda(rs.getFloat("precoVenda"));
                 a.setDescricao(rs.getString("descricao"));
             }
-            List<Observer> contratosCompra = new ArrayList<>();
+            List<Observer> contratos = new ArrayList<>();
             cc = conn.prepareStatement("SELECT * FROM Contrato WHERE idAtivo = ? AND compra = 1 AND encerrado = 0");
             cc.setString(1,Integer.toString((Integer) rs.getInt("idAtivo")));
             c = cc.executeQuery();
@@ -266,12 +266,9 @@ public class AtivoDAO implements Map<Integer, Ativo> {
                 else
                     contrato.setEncerrado(true);
                 contrato.setEss((ESS_ltd) ess);
-                contratosCompra.add(contrato);
+                contratos.add(contrato);
             }
 
-            a.setObservers_ContratoCompra(contratosCompra);
-
-            List<Observer> contratosVenda = new ArrayList<>();
             cv = conn.prepareStatement("SELECT * FROM Contrato WHERE idAtivo = ? AND compra = 0 AND encerrado = 0");
             cv.setString(1,Integer.toString((Integer) rs.getInt("idAtivo")));
             k = cv.executeQuery();
@@ -296,10 +293,10 @@ public class AtivoDAO implements Map<Integer, Ativo> {
                 else
                     contrato.setEncerrado(true);
                 contrato.setEss((ESS_ltd)ess);
-                contratosVenda.add(contrato);
+                contratos.add(contrato);
             }
 
-            a.setObservers_ContratoVenda(contratosVenda);
+            a.setObservers(contratos);
 
         }
         catch(SQLException e){

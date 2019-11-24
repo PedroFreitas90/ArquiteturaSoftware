@@ -29,7 +29,7 @@ public class ESS_ltd {
 	}
 
 
-	public synchronized Utilizador iniciarSessao(String username, String password) throws UtilizadorInvalidoException {
+	public  Utilizador iniciarSessao(String username, String password) throws UtilizadorInvalidoException {
 		Utilizador u = verficaUtilizador(username);
 		if (u != null) {
 			String pass = u.getPassword();
@@ -43,7 +43,7 @@ public class ESS_ltd {
 
 	}
 
-	public synchronized void registarUtilizador(String username, String password, int saldo) throws UsernameInvalidoException {
+	public  void registarUtilizador(String username, String password, int saldo) throws UsernameInvalidoException {
 		if ((verficaUtilizador(username)) != null)
 			throw new UsernameInvalidoException("Username inválido");
 		else {
@@ -54,7 +54,7 @@ public class ESS_ltd {
 		}
 	}
 
-	public synchronized Utilizador verficaUtilizador(String nome) {
+	public  Utilizador verficaUtilizador(String nome) {
 		Utilizador user = null;
 		for (Utilizador u : this.utilizadores.values()) {
 			if (u.getUsername().equals(nome)) {
@@ -66,11 +66,11 @@ public class ESS_ltd {
 		return user;
 	}
 
-	public synchronized float saldo(Utilizador u) {
+	public  float saldo(Utilizador u) {
 		return u.getPlafom();
 	}
 
-	public synchronized List<Ativo> listarAtivos() {
+	public  List<Ativo> listarAtivos() {
 		List<Ativo> ativos = new ArrayList<>();
 		for (Ativo a : this.ativos.values())
 			ativos.add(a.clone());
@@ -80,7 +80,7 @@ public class ESS_ltd {
 	}
 
 
-	public synchronized void criarContratoVenda(Utilizador u, int idAtivo, float takeprofit, float stoploss, int quantidade) throws AtivoInvalidoException, SaldoInsuficienteException {
+	public  void criarContratoVenda(Utilizador u, int idAtivo, float takeprofit, float stoploss, int quantidade) throws AtivoInvalidoException, SaldoInsuficienteException {
 
 		Ativo a = this.ativos.get(idAtivo).clone();
 		if (a == null)
@@ -100,7 +100,7 @@ public class ESS_ltd {
 		}
 	}
 
-	public synchronized void criarContratoCompra(Utilizador u, int idAtivo, float takeprofit, float stoploss, int quantidade) throws AtivoInvalidoException, SaldoInsuficienteException {
+	public  void criarContratoCompra(Utilizador u, int idAtivo, float takeprofit, float stoploss, int quantidade) throws AtivoInvalidoException, SaldoInsuficienteException {
 
 		Ativo a = this.ativos.get(idAtivo).clone();
 		if (a == null)
@@ -119,7 +119,7 @@ public class ESS_ltd {
 		}
 	}
 
-	public synchronized List<Contrato> listarPortefolio(Utilizador u) {
+	public  List<Contrato> listarPortefolio(Utilizador u) {
 		List<Contrato> contratosUtilizador = new ArrayList<>();
 		Collection<Contrato> contratos = this.contratos.values();
 		for(Contrato c : contratos)
@@ -128,7 +128,7 @@ public class ESS_ltd {
 		return contratosUtilizador;
 	}
 
-	public synchronized void fecharContrato(Utilizador u, int idContrato) throws ContratoInvalidoException {
+	public  void fecharContrato(Utilizador u, int idContrato) throws ContratoInvalidoException {
 		boolean sucess = false;
 		Contrato c = this.contratos.get(idContrato,u.getId());
 			if (c != null && !c.isEncerrado()) {
@@ -146,7 +146,7 @@ public class ESS_ltd {
 	}
 
 
-	public synchronized Ativo criarAtivo(String ativo, int id) throws IOException, SocketTimeoutException {
+	public  Ativo criarAtivo(String ativo, int id) throws IOException, SocketTimeoutException {
 		float compra, venda;
 		Stock stock = YahooFinance.get(ativo);
 		BigDecimal precoVenda = stock.getQuote().getBid();
@@ -168,7 +168,7 @@ public class ESS_ltd {
 	}
 
 
-	public synchronized void fecharContratoCompra(Utilizador u, Contrato c) {
+	public  void fecharContratoCompra(Utilizador u, Contrato c) {
 		int size = this.registos.size() + 1;
 		int id_ativo = c.getIdAtivo();
 		Ativo a = ativos.get(id_ativo).clone();// temos que ir ver o valor atual do ativo
@@ -184,7 +184,7 @@ public class ESS_ltd {
 	}
 
 
-	public synchronized void fecharContratoVenda(Utilizador u, Contrato c) {
+	public  void fecharContratoVenda(Utilizador u, Contrato c) {
 		int size = this.registos.size() + 1;
 		int id_ativo = c.getIdAtivo();
 		Ativo a = ativos.get(id_ativo).clone();// temos que ir ver o valor atual do ativo
@@ -199,7 +199,7 @@ public class ESS_ltd {
 		this.contratos.put(c.getId(), c);
 	}
 
-	public synchronized List<Registo> listaRegistos(Utilizador u) {
+	public List<Registo> listaRegistos(Utilizador u) {
 		List<Registo> registos = new ArrayList<>();
 
 		for (Registo r : this.registos.values())
@@ -208,14 +208,12 @@ public class ESS_ltd {
 		return registos;
 	}
 
-	public synchronized void fecharContratosComLimites(Contrato c ) throws ContratoInvalidoException {
+	public  void fecharContratosComLimites(Contrato c ) throws ContratoInvalidoException {
 		Utilizador u;
 		u = this.utilizadores.get(c.getIdUtilizador());
 		fecharContrato(u, c.getId());
-		if(c.isCompra())
-			ativos.get(c.getIdAtivo()).removeObserverCompra(c);
-		else
-			ativos.get(c.getIdAtivo()).removeObserverVenda(c);
+		ativos.get(c.getIdAtivo()).removeObserver(c);
+
 
 
 	}
@@ -229,17 +227,17 @@ public class ESS_ltd {
 
 	}
 */
-	public synchronized void updateEstadoPedido(Pedido p) {
+	public  void updateEstadoPedido(Pedido p) {
 
 		int id = p.getEstado().getIdentificador();
 		this.pedidos.put(id, p);
 	}
 
-	public synchronized int sizePedidos(){
+	public int sizePedidos(){
 		return this.pedidos.size();
 	}
 
-    public synchronized Ativo getAtivo(String descricao){
+    public  Ativo getAtivo(String descricao){
 	        return this.ativos.get(descricao,this);
     }
 

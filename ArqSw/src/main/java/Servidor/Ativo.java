@@ -14,9 +14,8 @@ public class Ativo implements Subject {
 	private float precoVenda;
 	private float precoCompra;
 	private String descricao;
-	private List<Observer> observers_ContratoCompra;
-	private List<Observer> observers_ContratoVenda;
-	private ArrayList<Observer> observers_Utilizadores;
+	private List<Observer> observers;
+
 
 
 
@@ -25,19 +24,14 @@ public class Ativo implements Subject {
 		this.precoVenda = precoVenda;
 		this.precoCompra = precoCompra;
 		this.descricao = descricao;
-		this.observers_ContratoCompra = new ArrayList<>();
-		this.observers_ContratoVenda = new ArrayList<>();
-		this.observers_Utilizadores = new ArrayList<>();
+		this.observers = new ArrayList<>();
 	}
 	public Ativo(Ativo a) {
 		this.id = a.getId();
 		this.precoCompra = a.getPrecoCompra();
 		this.precoVenda = a.getPrecoVenda();
 		this.descricao = a.getDescricao();
-		this.observers_ContratoCompra = new ArrayList<>();
-		this.observers_ContratoVenda = new ArrayList<>();
-		this.observers_Utilizadores = new ArrayList<>();
-
+		this.observers = new ArrayList<>();
 	}
 
 	public Ativo() {
@@ -45,10 +39,7 @@ public class Ativo implements Subject {
 		this.precoVenda=0;
 		this.precoCompra=0;
 		this.descricao="";
-		this.observers_ContratoCompra = new ArrayList<>();
-		this.observers_ContratoVenda = new ArrayList<>();
-		this.observers_Utilizadores = new ArrayList<>();
-
+		this.observers = new ArrayList<>();
 	}
 
 	public float getPrecoVenda() {
@@ -109,80 +100,37 @@ public class Ativo implements Subject {
 	*/
 	/*****************************************************************************/
 	@Override
-	public void registerObserverUtilizador(Observer o){
-		this.observers_Utilizadores.add(o);
-	}
-	@Override
-	public void registerObserverCompra(Observer o){
-		this.observers_ContratoCompra.add(o);
-	}
-	@Override
-	public void registerObserverVenda(Observer o){
-		this.observers_ContratoVenda.add(o);
+	public void registerObserver(Observer o){
+		this.observers.add(o);
 	}
 
 	@Override
-	public void removeObserverCompra(Observer o){
-		if(this.observers_ContratoCompra.contains(o))
-			this.observers_ContratoCompra.remove(o);
+	public void removeObserver(Observer o){
+		if(this.observers.contains(o))
+			this.observers.remove(o);
 	}
 
 	@Override
-	public void removeObserverVenda(Observer o){
-		if(this.observers_ContratoVenda.contains(o))
-			this.observers_ContratoVenda.remove(o);
-	}
-
-	@Override
-	public void removeObserverUtilizador(Observer o){
-		if(this.observers_Utilizadores.contains(o))
-			this.observers_Utilizadores.remove(o);
-	}
-
-	@Override
-	public void notifyObserverCompra(){
-		for(int i = 0; i < this.observers_ContratoCompra.size() ;i++){
-			Observer o = (Observer) this.observers_ContratoCompra.get(i);
+	public void notifyObserver(){
+		for(int i = 0; i < this.observers.size() ;i++){
+			Observer o = (Observer) this.observers.get(i);
 			o.update(this);
 		}
 	}
-
-	@Override
-	public void notifyObserverVenda(){
-		for(int i = 0; i < this.observers_ContratoVenda.size() ;i++){
-			Observer o = (Observer) this.observers_ContratoVenda.get(i);
-			o.update(this);
-		}
-	}
-	@Override
-	public void notifyObserverUtilizador(){
-		for(int i = 0; i < this.observers_Utilizadores.size() ;i++){
-			Observer o = (Observer) this.observers_Utilizadores.get(i);
-			o.update(this);
-		}
-	}
-
     /*****************************************************************************/
 
 	public void setValores(float precoVenda,float precoCompra) {
 			this.precoCompra=precoCompra;
 			this.precoVenda=precoVenda;
-			notifyObserverCompra();
-			notifyObserverVenda();
+			notifyObserver();
 	}
 
 
-    public void setObservers_ContratoCompra(List<Observer> observers_ContratoCompra) {
-        this.observers_ContratoCompra = observers_ContratoCompra;
+    public void setObservers(List<Observer> observers_ContratoCompra) {
+        this.observers = observers_ContratoCompra;
     }
 
-    public void setObservers_ContratoVenda(List<Observer> observers_ContratoVenda) {
-        this.observers_ContratoVenda = observers_ContratoVenda;
-    }
 
-    public void setObservers_Utilizadores(ArrayList<Observer> observers_Utilizadores) {
-        this.observers_Utilizadores = observers_Utilizadores;
-    }
 
 
 

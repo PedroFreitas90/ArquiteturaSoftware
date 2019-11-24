@@ -29,7 +29,7 @@ public class ThreadClienteLe implements Runnable {
     }
 
     public void run(){
-        String resposta = null;
+        String resposta ;
 
         try {
             while((resposta = in.readLine()) != null){
@@ -37,7 +37,6 @@ public class ThreadClienteLe implements Runnable {
                     if(resposta.equals("TERMINADA"))
                         break;
 
-               // this.aplicacao.mostraMenu();
             }
 
             } catch (IOException e) {
