@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="9b503263-68d3-4a94-a834-cd8fe5374c3c" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../ArqSw/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/.idea/dataSources.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/src/main/java/Servidor/ESS_ltd.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/src/main/java/Servidor/ESS_ltd.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/src/main/java/Servidor/RealTime.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/src/main/java/Servidor/RealTime.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/src/main/java/Servidor/Servidor.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/src/main/java/Servidor/Servidor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/src/main/java/Servidor/ThreadCliente.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/src/main/java/Servidor/ThreadCliente.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/src/main/java/Servidor/Utilizador.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/src/main/java/Servidor/Utilizador.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/target/classes/Cliente/App.class" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/target/classes/Cliente/App.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/target/classes/Cliente/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/target/classes/Cliente/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/target/classes/Cliente/Menu.class" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/target/classes/Cliente/Menu.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/target/classes/Cliente/ThreadClienteEscreve.class" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/target/classes/Cliente/ThreadClienteEscreve.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/target/classes/Cliente/ThreadClienteLe.class" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/target/classes/Cliente/ThreadClienteLe.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/target/classes/DAOS/AtivoDAO.class" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/target/classes/DAOS/AtivoDAO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/target/classes/DAOS/Connect.class" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/target/classes/DAOS/Connect.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/target/classes/DAOS/ContratoDAO.class" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/target/classes/DAOS/ContratoDAO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/target/classes/DAOS/PedidoDAO.class" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/target/classes/DAOS/PedidoDAO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/target/classes/DAOS/RegistoDAO.class" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/target/classes/DAOS/RegistoDAO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/target/classes/DAOS/UtilizadorDAO.class" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/target/classes/DAOS/UtilizadorDAO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/Ativo.class" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/Ativo.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/AtivoInvalidoException.class" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/AtivoInvalidoException.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/Contrato.class" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/Contrato.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/ContratoInvalidoException.class" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/ContratoInvalidoException.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/ESS_ltd.class" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/ESS_ltd.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/Estado.class" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/Estado.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/Observer.class" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/Observer.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/Pedido$Memento.class" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/Pedido$Memento.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/Pedido.class" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/Pedido.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/RealTime.class" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/RealTime.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/Registo.class" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/Registo.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/SaldoInsuficienteException.class" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/SaldoInsuficienteException.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/Servidor.class" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/Servidor.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/Subject.class" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/Subject.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/ThreadCliente.class" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/ThreadCliente.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/UpdateAtivo.class" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/UpdateAtivo.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/UsernameInvalidoException.class" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/UsernameInvalidoException.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/Utilizador.class" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/Utilizador.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/UtilizadorInvalidoException.class" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/target/classes/Servidor/UtilizadorInvalidoException.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ArqSw/teste1.db" beforeDir="false" afterPath="$PROJECT_DIR$/../ArqSw/teste1.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Diagrama de classes.vpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Diagrama de classes.vpp" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectId" id="1TIKgcldGuieA0sHSJp1O1XWQmU" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../ArqSw" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="9b503263-68d3-4a94-a834-cd8fe5374c3c" name="Default Changelist" comment="" />
+      <created>1573142281205</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1573142281205</updated>
+      <workItem from="1573142282554" duration="616000" />
+      <workItem from="1573468047252" duration="114000" />
+      <workItem from="1574693090184" duration="99000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
