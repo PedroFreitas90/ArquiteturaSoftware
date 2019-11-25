@@ -19,13 +19,14 @@ public class Comunicacao extends Thread {
     private AsynchronousSocketChannel sc;
     private ByteBuffer inn = ByteBuffer.allocate(1024);
     private Queue<ByteBuffer> msgQueue; // queue de mensagens para enviar
-    private Comunicacao com;
+    private ThreadCliente cliente;
 
 
     // ASSINCRONO
 
-    public Comunicacao(AsynchronousSocketChannel s) {
+    public Comunicacao(AsynchronousSocketChannel s,ThreadCliente cliente) {
         this.sc = s;
+        this.cliente =cliente;
         this.inn = ByteBuffer.allocate(1024);
         this.msgQueue = new LinkedList<>();
         this.sc.read(inn, null, readHandler);
@@ -35,11 +36,10 @@ public class Comunicacao extends Thread {
 
     private CompletionHandler<Integer, Object> readHandler = new CompletionHandler<>() {
         @Override
-        // caso dei sucesso
         public void completed(Integer bytesRead, Object o) {
             if (bytesRead > 0) {
                 String pedido = getStringAtBuffer(inn);
-                com.processaPedido(pedido);
+                cliente.processaPedido(pedido);
                 inn = ByteBuffer.allocate(1024);
                 sc.read(inn, null, readHandler);
             }
@@ -50,7 +50,6 @@ public class Comunicacao extends Thread {
 
         }
     };
-// HANDLER DE ESCRITA
 
     private CompletionHandler<Integer, Object> writeHandler = new CompletionHandler<>() {
         @Override
@@ -73,9 +72,7 @@ public class Comunicacao extends Thread {
     public void send() {
         // synchronized na queue
         synchronized (msgQueue) {
-            // retira uma mensagem da queue
             ByteBuffer tosend = msgQueue.poll();
-            // envia a mensagem para o cliente
             this.sc.write(tosend, null, writeHandler);
         }
     }
@@ -85,9 +82,7 @@ public class Comunicacao extends Thread {
             String aux = res + '\n';
             ByteBuffer out = ByteBuffer.allocate(1024);
             byte[] data = aux.getBytes();
-            // coloca os bytes no buffer out
             out.put(data);
-            // mexe nos apontadores
             out.flip();
             msgQueue.add(out);
         }

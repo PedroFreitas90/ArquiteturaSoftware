@@ -67,7 +67,7 @@ public class ESS_ltd {
 	}
 
 	public  float saldo(Utilizador u) {
-		return u.getPlafom();
+		return this.utilizadores.get(u.getId()).getPlafom();
 	}
 
 	public  List<Ativo> listarAtivos() {
@@ -95,7 +95,6 @@ public class ESS_ltd {
 			u.setPlafom(u.getPlafom() - valor_total);
 			this.utilizadores.put(u.getId(), u);
 			Contrato c = new Contrato(size, idAtivo, u.getId(), preco, takeprofit, stoploss, quantidade, false, false);
-		//	u.addContrato(c);//poe no portefolio
 			this.contratos.put(size, c);//poe na lista total de contratos
 		}
 	}
@@ -148,17 +147,18 @@ public class ESS_ltd {
 
 	public  Ativo criarAtivo(String ativo, int id) throws IOException, SocketTimeoutException {
 		float compra, venda;
+		BigDecimal  zero= new BigDecimal("0.0");
 		Stock stock = YahooFinance.get(ativo);
 		BigDecimal precoVenda = stock.getQuote().getBid();
 		BigDecimal precoCompra = stock.getQuote().getAsk();
-		if (precoCompra != null)
+		if(precoCompra!=null && precoCompra.compareTo(zero)!=0)
 			compra = precoCompra.floatValue();
 		else
-			compra = 0;
-		if (precoVenda != null)
+			return null;
+		if(precoVenda!=null &&  precoVenda.compareTo(zero)!= 0)
 			venda = precoVenda.floatValue();
 		else
-			venda = 0;
+			return null;
 		Ativo a = new Ativo(id, venda, compra, ativo);
 		if (!this.ativos.containsValue(a))
 			this.ativos.put(id, a);
@@ -218,15 +218,7 @@ public class ESS_ltd {
 
 	}
 
-	/*
-	public synchronized void addPedido(Utilizador u,String pedido){
-		Pedido p = new Pedido();
-		int tamanho = this.pedidos.size()+1;
-		p.set(pedido,false,tamanho,u.getId());
-		this.pedidos.put(tamanho,p);
 
-	}
-*/
 	public  void updateEstadoPedido(Pedido p) {
 
 		int id = p.getEstado().getIdentificador();

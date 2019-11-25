@@ -17,6 +17,7 @@ class UpdateAtivo extends Thread{
     }
         public void run(){
         Ativo ativo;
+        BigDecimal  zero= new BigDecimal("0.0");
             try {
                 System.out.println("eu sou a thread "+Thread.activeCount());
         while(true) {
@@ -26,14 +27,14 @@ class UpdateAtivo extends Thread{
             stock = YahooFinance.get(nomeAtivo);
             BigDecimal precoVenda = stock.getQuote().getBid();
             BigDecimal precoCompra = stock.getQuote().getAsk();
-            if(precoCompra!=null)
+            if(precoCompra!=null && precoCompra.compareTo(zero)!=0)
                 compra = precoCompra.floatValue();
             else
-                compra=0;
-            if(precoVenda!=null)
+                compra = ativo.getPrecoCompra();
+            if(precoVenda!=null &&  precoVenda.compareTo(zero)!= 0)
                 venda = precoVenda.floatValue();
             else
-                venda=0;
+                venda=ativo.getPrecoVenda();
 
             ativo.setValores(venda,compra);
             ess.getAtivos().put(ativo.getId(),ativo);

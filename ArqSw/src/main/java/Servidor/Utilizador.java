@@ -53,9 +53,11 @@ public class Utilizador {
 
 
 	public Pedido getPedidoAtual() {
-	        pedidoAtual.restoreFromMemento(pedidosPendentes.get(posUltimoRespondido+1));
-			if(!pedidoAtual.getEstado().getEstado())
-		return this.pedidoAtual;
+		if(!pedidosPendentes.isEmpty()) {
+			pedidoAtual.restoreFromMemento(pedidosPendentes.get(posUltimoRespondido + 1));
+			if (!pedidoAtual.getEstado().getEstado())
+				return this.pedidoAtual;
+		}
 			return null;
 	}
 
