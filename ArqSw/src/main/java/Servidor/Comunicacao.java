@@ -39,6 +39,7 @@ public class Comunicacao extends Thread {
         public void completed(Integer bytesRead, Object o) {
             if (bytesRead > 0) {
                 String pedido = getStringAtBuffer(inn);
+                System.out.println(pedido);
                 cliente.processaPedido(pedido);
                 inn = ByteBuffer.allocate(1024);
                 sc.read(inn, null, readHandler);

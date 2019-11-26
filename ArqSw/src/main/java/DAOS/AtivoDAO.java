@@ -241,8 +241,7 @@ public class AtivoDAO implements Map<Integer, Ativo> {
                 a.setPrecoVenda(rs.getFloat("precoVenda"));
                 a.setDescricao(rs.getString("descricao"));
             }
-            List<Observer> contratos = new ArrayList<>();
-            cc = conn.prepareStatement("SELECT * FROM Contrato WHERE idAtivo = ? AND compra = 1 AND encerrado = 0");
+            cc = conn.prepareStatement("SELECT * FROM Contrato WHERE idAtivo = ? AND encerrado = 0");
             cc.setString(1,Integer.toString((Integer) rs.getInt("idAtivo")));
             c = cc.executeQuery();
 
@@ -266,37 +265,8 @@ public class AtivoDAO implements Map<Integer, Ativo> {
                 else
                     contrato.setEncerrado(true);
                 contrato.setEss((ESS_ltd) ess);
-                contratos.add(contrato);
+                a.registerObserver(contrato);
             }
-
-            cv = conn.prepareStatement("SELECT * FROM Contrato WHERE idAtivo = ? AND compra = 0 AND encerrado = 0");
-            cv.setString(1,Integer.toString((Integer) rs.getInt("idAtivo")));
-            k = cv.executeQuery();
-
-            while(k.next()) {
-                Contrato contrato = new Contrato();
-                contrato.setId(k.getInt("idContrato"));
-                contrato.setIdAtivo(k.getInt("idAtivo"));
-                contrato.setIdUtilizador(k.getInt("idUtilizador"));
-                contrato.setPreco(k.getFloat("preco"));
-                contrato.setTakeProfit(k.getFloat("takeprofit"));
-                contrato.setStopLoss(k.getFloat("stoploss"));
-                contrato.setQuantidade(k.getInt("quantidade"));
-                int compra = k.getInt("compra");
-                if(compra==0)
-                    contrato.setCompra(false);
-                else
-                    contrato.setCompra(true);
-                int encerrado = k.getInt("encerrado");
-                if(encerrado==0)
-                    contrato.setEncerrado(false);
-                else
-                    contrato.setEncerrado(true);
-                contrato.setEss((ESS_ltd)ess);
-                contratos.add(contrato);
-            }
-
-            a.setObservers(contratos);
 
         }
         catch(SQLException e){
