@@ -21,13 +21,23 @@ public class ThreadCliente {
     public void processaPedido(String pedido) {
 
         String[] campos = pedido.split(" ");
-        if (!(campos[0].equals("SESSAO") || campos[0].equals("REGISTAR"))) {
+        if (!(campos[0].equals("SESSAO") || campos[0].equals("REGISTAR") || campos[0].equals("TERMINAR"))){
             int size = ess.sizePedidos() + 1;
             Pedido p = new Pedido();
             p.set(pedido, false, size, user.getId());
             ess.updateEstadoPedido(p);
             user.setPedido(p);
             proximoPedido();
+            /**********************NOVO REQUISITO***********/
+            // ENVIAR NOTIFICACOES
+            List<String> not = ess.veNotificacoes(user);
+            if(not.size()>0) {
+                comunicacao.adicionaQueue("**********NOTIFICAÇÃO*******");
+                for (String s : not)
+                    comunicacao.adicionaQueue(s);
+                comunicacao.send();
+            }
+            /**********************************************/
         } else {// CASO ESPECIAL DE LOGIN E REGISTO
             String resposta = interpretaPedido(pedido);
             comunicacao.adicionaQueue(resposta);
@@ -53,7 +63,6 @@ public class ThreadCliente {
     public String interpretaPedido(String pedido)  {
         String [] campos;
         campos = pedido.split(" ");
-        System.out.println(pedido);
         switch (campos[0]) {
             case "SESSAO":
                 return iniciar_Sessao(campos[1], campos[2]);
@@ -76,12 +85,16 @@ public class ThreadCliente {
                 return verRegistos();
             case "TERMINAR":
                 return terminarSessao();
+/****************** NOVO REQUISITO*************/
+            case "SEGUIRATIVO":
+                return seguirAtivo(campos[1]);
             default:
                 return pedido + " NAO É UM COMANDO VÁLIDO\n";
 
         }
 
     }
+
 
 
     public String iniciar_Sessao(String username,String password ){
@@ -248,6 +261,22 @@ public class ThreadCliente {
             }
         }
     }
+
+/******************** NOVO REQUISITO ****************/
+    private String seguirAtivo(String idAtivo) throws NumberFormatException {
+        boolean sucess = false;
+        try {
+            int id_ativo = Integer.parseInt(idAtivo);
+            ess.seguirAtivo(user,id_ativo);
+            sucess= true;
+        }finally {
+            if (sucess)
+                return "Ativo seguido com sucesso";
+            else
+                return "Id invalido ";
+        }
+    }
+
 }
 
 

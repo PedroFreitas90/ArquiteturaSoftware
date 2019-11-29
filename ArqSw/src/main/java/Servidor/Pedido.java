@@ -21,7 +21,6 @@ package Servidor;
 
      public Memento saveToMemento()
      {
-         System.out.println("Saving time to Memento");
          return new Memento(this.estado);
      }
 

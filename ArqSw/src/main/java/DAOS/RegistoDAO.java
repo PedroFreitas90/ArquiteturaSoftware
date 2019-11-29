@@ -1,6 +1,5 @@
 package DAOS;
 
-import Servidor.Ativo;
 import Servidor.Registo;
 
 import java.sql.*;

@@ -183,54 +183,6 @@ public class UtilizadorDAO implements Map<Integer, Utilizador> {
     }
 
 
-    public  List<Contrato> contratosUtilizador(int id) {
-        List<Contrato> contratos = new ArrayList<>();
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            conn = Connect.connect();
-
-             ps = conn.prepareStatement("SELECT * FROM Contrato WHERE idUtilizador= ?");
-            ps.setString(1, Integer.toString( id));
-             rs = ps.executeQuery();
-            for (; rs.next(); )  {
-                Contrato c = new Contrato();
-                c.setId(rs.getInt("idContrato"));
-                c.setIdAtivo(rs.getInt("idAtivo"));
-                c.setIdUtilizador(rs.getInt("idUtilizador"));
-                c.setPreco(rs.getInt("preco"));
-                c.setTakeProfit(rs.getLong("takeprofit"));
-                c.setStopLoss(rs.getLong("stoploss"));
-                c.setQuantidade(rs.getInt("quantidade"));
-                int compra = rs.getInt("compra");
-                if (compra == 0)
-                    c.setCompra(false);
-                else
-                    c.setCompra(true);
-                int encerrado = rs.getInt("encerrado");
-                if (encerrado == 0)
-                    c.setEncerrado(false);
-                else
-                    c.setEncerrado(true);
-                contratos.add(c);
-
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                ps.close();
-                rs.close();
-                Connect.close(conn);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-
-        }
-        return contratos;
-    }
-
-
     public  List<Pedido.Memento> mementosUtilizador(int id){
         List<Pedido.Memento> mementos = new ArrayList<>();
         PreparedStatement ps =null;
@@ -270,5 +222,87 @@ public class UtilizadorDAO implements Map<Integer, Utilizador> {
         }
         return mementos;
     }
+ /******************************* NOVO REQUISITO ****************/
+    public void putNotificacao(Integer key,String notificacao){
+        PreparedStatement ps = null;
+        try {
+            conn = Connect.connect();
+            ps = conn.prepareStatement("INSERT INTO Notificacao (idUtilizador,descricao,enviado) VALUES (?,?,?)");
+            ps.setString(1, Integer.toString(key));
+            ps.setString(2, notificacao);
+            ps.setString(3, Integer.toString(0));
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.printf(e.getMessage());
+        } finally {
+            try {
+                ps.close();
+                Connect.close(conn);
+
+            } catch (Exception e) {
+                System.out.printf(e.getMessage());
+            }
+        }
+
+    }
+
+    public synchronized List<String> getNotificacoes(int id) {
+        List<String> notificacoes =  new ArrayList<>();
+        PreparedStatement stm = null;
+        ResultSet rs = null;
+        try {
+            conn = Connect.connect();
+            stm = conn.prepareStatement("SELECT * FROM Notificacao where idUtilizador = ? AND enviado = 0");
+            stm.setString(1, Integer.toString((Integer)id));
+            rs = stm.executeQuery();
+            for (; rs.next(); ) {
+                notificacoes.add(rs.getString(3));
+            }
+            stm = conn.prepareStatement("DELETE FROM Notificacao WHERE idUtilizador = ?");
+            stm.setString(1,Integer.toString((Integer) id));
+            stm.executeUpdate();
+
+
+
+        } catch (SQLException e) {
+            System.out.println("nao fez a query");
+            throw new NullPointerException("nao fez a query");
+        } finally {
+            try {
+                stm.close();
+                rs.close();
+                Connect.close(conn);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        return notificacoes;
+    }
+
+    public void  estadoNotificacao(int id) {
+        PreparedStatement stm = null;
+        try {
+            conn = Connect.connect();
+            stm = conn.prepareStatement("UPDATE Notificacao SET enviado = 1 where idNotificacao = ? ");
+            stm.setString(1, Integer.toString((Integer)  id));
+            stm.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("nao fez a query");
+            throw new NullPointerException("nao fez a query");
+        } finally {
+            try {
+                stm.close();
+                Connect.close(conn);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+    }
+
 
 }
+

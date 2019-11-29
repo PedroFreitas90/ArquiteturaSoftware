@@ -20,6 +20,7 @@ public class Menu {
                           "* 5 - Consultar portfólio         *\n"+
                           "* 6 - Fechar contrato             *\n"+
                           "* 7 - Ver Registos                *\n"+
+                          "* 8 - Seguir Ativo                *\n"+
                           "* 0 - Terminar Sessão             *\n"+
                           "***********************************\n";
     }

@@ -46,35 +46,43 @@ public class App {
             int op = Integer.parseInt(pedido);
             switch (op) {
                 case 0:
-                    terminaSessao();
-                    break;
+                        terminaSessao();
+                        break;
                 case 1:
-                    consultar_Saldo();
-                    break;
+                        consultar_Saldo();
+                        break;
                 case 2:
-                    listaAtivos();
-                    break;
+                        listaAtivos();
+                        break;
                 case 3:
-                    venderContrato();
-                    break;
+                        venderContrato();
+                        break;
                 case 4 :
-                    comprarContrato();
-                    break;
+                        comprarContrato();
+                        break;
                 case 5 :
                         verPortefolio();
                         break;
                 case 6: fecharContrato();
                         break;
                 case 7:
-                    verRegistos();
-                    break;
+                        verRegistos();
+                        break;
+                case 8:
+                        seguirAtivo();
+                        break;
+                default : System.out.println("Opção inválida");
             }
+
             Thread.sleep(2000);
             mostraMenu();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
+
+
+
     public void handlerMenuInicial(){
         try {
           String pedido=  teclado.readLine();
@@ -95,8 +103,9 @@ public class App {
                         break;
                 }
 
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+        } catch (IOException | InterruptedException  | NumberFormatException e) {
+            System.out.println("Por favor siga-se pelos números");
+            mostraMenu();
         }
 
     }
@@ -257,5 +266,21 @@ public class App {
         sb = sb.append(pedido);
         escreve.addPedido(sb.toString());
     }
+
+
+/***************** NOVO REQUISITO **************/
+
+public void seguirAtivo() throws IOException {
+    StringBuilder sb = new StringBuilder();
+    String pedido = "SEGUIRATIVO";
+    sb=sb.append(pedido);
+    sb.append(" ");
+    System.out.println("Id do ativo");
+    String idAtivo= teclado.readLine();
+    sb.append(idAtivo);
+    sb.append(" ");
+    escreve.addPedido(sb.toString());
+}
+
 
 }

@@ -223,11 +223,13 @@ public class AtivoDAO implements Map<Integer, Ativo> {
     public synchronized Ativo get(Object descricao, Object ess){
         PreparedStatement ps = null;
         PreparedStatement cc = null;
-        PreparedStatement cv = null;
+        PreparedStatement us = null;
+        PreparedStatement as = null;
 
         ResultSet rs = null;
         ResultSet c = null;
         ResultSet k = null;
+        ResultSet aa = null;
         Ativo a = new Ativo();
         try{
             conn = Connect.connect();
@@ -267,6 +269,36 @@ public class AtivoDAO implements Map<Integer, Ativo> {
                 contrato.setEss((ESS_ltd) ess);
                 a.registerObserver(contrato);
             }
+            us = conn.prepareStatement("SELECT * FROM Seguidores s ,Utilizador u WHERE idAtivo = ?  AND u.idUtilizador=s.idUtilizador");
+            us.setString(1,Integer.toString((Integer) rs.getInt(1)));
+            int x = rs.getInt(1);
+            k = us.executeQuery();
+            while(k.next()){
+                Utilizador utilizador = new Utilizador();
+                utilizador.setId((Integer)k.getInt(5));
+                utilizador.setUsername(k.getString(6));
+                utilizador.setPassword(k.getString(7));
+                utilizador.setPlafom(k.getLong(8));
+
+                as = conn.prepareStatement("SELECT * FROM Seguidores s ,Ativo a WHERE idUtilizador= ?  AND a.idAtivo=s.idAtivo");
+                as.setString(1,Integer.toString((Integer) k.getInt(5)));
+                aa = as.executeQuery();
+                Map<Integer,Ativo > ativosSeguidos = new HashMap<>();
+                while(aa.next()){
+                    Ativo ativoSeguido =  new Ativo();
+                    ativoSeguido.setId(aa.getInt(5));
+                    ativoSeguido.setPrecoCompra(aa.getFloat(3));
+                    ativoSeguido.setPrecoVenda(aa.getFloat(4));
+                    ativoSeguido.setDescricao(aa.getString(8));
+                    ativosSeguidos.put(ativoSeguido.getId(),ativoSeguido);
+                }
+
+                utilizador.setaSeguir(ativosSeguidos);
+                utilizador.setEss((ESS_ltd)ess);
+                a.registerObserver(utilizador);
+            }
+
+
 
         }
         catch(SQLException e){
@@ -278,4 +310,38 @@ public class AtivoDAO implements Map<Integer, Ativo> {
         }
         return a;
     }
+
+/******************* NOVO REQUISITO*******************/
+    public synchronized  void putSeguidor(Integer key,Ativo a){
+        PreparedStatement ps = null;
+        try{
+            conn = Connect.connect();
+            ps = conn.prepareStatement("DELETE FROM Seguidores WHERE idAtivo = ? AND idUtilizador= ?" );
+            ps.setString(1,Integer.toString((Integer) a.getId()));
+            ps.setString(2,Integer.toString((Integer) key));
+            ps.executeUpdate();
+            ps = conn.prepareStatement("INSERT INTO Seguidores(idAtivo,idUtilizador,valorCompra,valorVenda) VALUES (?,?,?,?)");
+            ps.setString(1,Integer.toString(a.getId()));
+            ps.setString(2, Integer.toString(key));
+            ps.setString(3, Float.toString(a.getPrecoCompra()));
+            ps.setString(4,Float.toString(a.getPrecoVenda()));
+            ps.executeUpdate();
+
+
+        }
+        catch(SQLException e){
+            System.out.printf(e.getMessage());
+        }
+        finally{
+            try {
+                ps.close();
+                Connect.close(conn);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+    }
+
 }

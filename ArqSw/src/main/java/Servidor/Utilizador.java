@@ -1,13 +1,12 @@
 package Servidor;
 
 import java.net.Socket;
+import java.sql.Timestamp;
 import java.time.Period;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
-public class Utilizador {
+public class Utilizador implements Observer{
+	private ESS_ltd ess;
 	private int id;
 	private String username;
 	private String password;
@@ -15,6 +14,8 @@ public class Utilizador {
     private List<Pedido.Memento> pedidosPendentes;
     private Pedido pedidoAtual;
     private int posUltimoRespondido;// posicao no array do ultimo pedido respondido com sucesso
+	/********************* NOVO REQUISITO********/
+	private Map<Integer,Ativo> aSeguir;
 
 
 
@@ -106,4 +107,50 @@ public class Utilizador {
 		this.plafom = plafom;
 	}
 
+	@Override
+	public String toString() {
+		return "Utilizador{" +
+				"id=" + id +
+				", username='" + username + '\'' +
+				", password='" + password + '\'' +
+				", plafom=" + plafom +
+				", pedidosPendentes=" + pedidosPendentes +
+				", pedidoAtual=" + pedidoAtual +
+				", posUltimoRespondido=" + posUltimoRespondido +
+				'}';
+	}
+	public  void setEss(ESS_ltd ess){
+		this.ess=ess;
+	}
+
+
+
+
+	/************************* NOVO REQUISITO**************/
+
+	public Map<Integer,Ativo> getaSeguir() {
+		return aSeguir;
+	}
+
+	public void setaSeguir(Map<Integer,Ativo> aSeguir) {
+		this.aSeguir = aSeguir;
+	}
+
+	@Override
+	//pegar no valor do ativo e verificar se houve variação acima dos 5%
+	public void update(Ativo a) {
+		Ativo seguir = aSeguir.get(a.getId()); // procurar o ativo no map
+		if (seguir != null) {// se encontrou
+			float valorCompraSeguir = seguir.getPrecoCompra();
+			float valorVendaSeguir = seguir.getPrecoVenda();
+			float percentagemCompra = Math.abs(valorCompraSeguir - a.getPrecoCompra()) / valorCompraSeguir;
+			float percentagemVenda = Math.abs(valorVendaSeguir - a.getPrecoVenda()) / valorVendaSeguir;
+
+			if (percentagemCompra > 0.1 || percentagemVenda > 0.1) {
+				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+				ess.novaNotificacao(this, " ativo "+ a.getDescricao()+ "  teve uma mudança brusca às " + timestamp,a);
+			}
+		}
+
+	}
 }

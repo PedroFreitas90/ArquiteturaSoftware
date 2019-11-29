@@ -236,6 +236,25 @@ public class ESS_ltd {
     public AtivoDAO getAtivos() {
         return ativos;
     }
+
+
+/************* NOVO REQUISITO********************/
+    public void novaNotificacao(Utilizador u , String notificaco,Ativo a){
+		this.utilizadores.putNotificacao(u.getId(),notificaco);
+		seguirAtivo(u ,a.getId());
+	}
+
+	public List<String> veNotificacoes(Utilizador u ){
+		List<String> notificacoes = this.utilizadores.getNotificacoes(u.getId());
+		return notificacoes;
+	}
+
+	public void seguirAtivo(Utilizador u,  int idAtivo){
+
+		Ativo a = this.ativos.get(idAtivo);
+		this.ativos.putSeguidor(u.getId(),a);
+
+	}
 }
 
 
