@@ -19,7 +19,6 @@ class UpdateAtivo extends Thread{
         Ativo ativo;
         BigDecimal  zero= new BigDecimal("0.0");
             try {
-                System.out.println("eu sou a thread "+Thread.activeCount());
         while(true) {
             ativo=ess.getAtivo(nomeAtivo);
             float compra,venda;

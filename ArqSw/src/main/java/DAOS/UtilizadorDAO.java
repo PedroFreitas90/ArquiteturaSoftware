@@ -148,7 +148,6 @@ public class UtilizadorDAO implements Map<Integer, Utilizador> {
         ResultSet rs = null;
         try {
             conn = Connect.connect();
-            System.out.println(conn.isClosed());
             stm = conn.prepareStatement("SELECT * FROM Utilizador");
              rs = stm.executeQuery();
             for (; rs.next(); ) {
@@ -280,29 +279,6 @@ public class UtilizadorDAO implements Map<Integer, Utilizador> {
 
         return notificacoes;
     }
-
-    public void  estadoNotificacao(int id) {
-        PreparedStatement stm = null;
-        try {
-            conn = Connect.connect();
-            stm = conn.prepareStatement("UPDATE Notificacao SET enviado = 1 where idNotificacao = ? ");
-            stm.setString(1, Integer.toString((Integer)  id));
-            stm.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("nao fez a query");
-            throw new NullPointerException("nao fez a query");
-        } finally {
-            try {
-                stm.close();
-                Connect.close(conn);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-
-
-        }
-    }
-
 
 }
 
