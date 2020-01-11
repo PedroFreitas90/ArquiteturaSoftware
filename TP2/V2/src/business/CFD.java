@@ -129,25 +129,20 @@ public abstract class CFD implements Observer {
 	}
 
 	public boolean update(double valorAtivo, String idAtivo) {
-		// se cfd fechado, retorna falso (nao atualizou)
 		if (!this.isAberto())
 			return false;
 
-		double valorDoCFD = this.getValorCFD(valorAtivo); // template method
-		Double takeprofit = this.getLimitSup();
-		Double stoploss = this.getLimiteInf();
-
+		double valorDoCFD = this.getValorCFD(valorAtivo);
 		boolean atualizou = false;
-		if (takeprofit != null && valorDoCFD >= takeprofit) {
+		if (isUltrapassouLimites(valorDoCFD)){
 			this.fecharCFD(valorAtivo);
 			atualizou = true;
 		}
-		if (stoploss != null && valorDoCFD <= stoploss) {
-			this.fecharCFD(valorAtivo);
-			atualizou = true;
-		}
-
 		return atualizou;
+	}
+
+	private boolean isUltrapassouLimites(double valorDoCFD){
+		return (this.limitSup!=null && valorDoCFD >= this.limitSup )|| (this.limiteInf != null && valorDoCFD <= limiteInf);
 	}
 
 	/**
