@@ -84,7 +84,7 @@ public abstract class Ativo implements Runnable, Observable {
 
     public void run() {
         double quotAntiga = this.getValorPorUnidade();
-        double quot = this.getValorPorUnidadeMaisRecente(); // template method
+        double quot = this.getValorPorUnidadeMaisRecente();
         this.setValorPorUnidade(quot);
 
         if (quot != quotAntiga) {

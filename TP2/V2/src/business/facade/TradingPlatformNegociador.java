@@ -79,31 +79,31 @@ public class TradingPlatformNegociador implements FacadeNegociador {
      */
     public CFD registarCFD(String idAtivo, int nifNegociador, double unidadesDeCompra, Double limiteMin, Double limiteMax, String tipo)
             throws NegociadorNaoExisteException, NegociadorNaoPossuiSaldoSuficienteException {
-
         if (!this.negociadores.containsKey(nifNegociador))
             throw new NegociadorNaoExisteException(nifNegociador);
 
         Ativo ativo = this.ativos.get(idAtivo);
         Negociador n = this.negociadores.get(nifNegociador);
         double investimento = unidadesDeCompra * ativo.getValorPorUnidade();
-
         if (!n.podeGastar(investimento))
             throw new NegociadorNaoPossuiSaldoSuficienteException(investimento, nifNegociador);
 
+        CFD c = inserirCFD(ativo,nifNegociador,unidadesDeCompra,limiteMin,limiteMax,tipo,investimento);
+        return c;
+    }
+
+    private CFD inserirCFD(Ativo ativo, int nifNegociador, double unidadesDeCompra, Double limiteMin, Double limiteMax, String tipo,double investimento) throws NegociadorNaoExisteException {
         int id = cfds.size();
         CFD c;
-        // by default creating short positions
         if (tipo.equals("Long")) {
             c = new Long(id, LocalDateTime.now(), unidadesDeCompra, ativo.getValorPorUnidade(), limiteMin, limiteMax, ativo.getId(), nifNegociador, true);
-        } else {
+        } else
             c = new Short(id, LocalDateTime.now(), unidadesDeCompra, ativo.getValorPorUnidade(), limiteMin, limiteMax, ativo.getId(), nifNegociador, true);
-        }
         this.atualizarSaldo(nifNegociador, -investimento);
         this.cfds.put(c.getId(), c);
 
         ativo.registerObserver(c);
-
-        return c;
+        return  c;
     }
 
     /**

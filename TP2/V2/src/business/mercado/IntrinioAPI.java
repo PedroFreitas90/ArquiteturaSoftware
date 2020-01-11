@@ -18,21 +18,22 @@ public class IntrinioAPI implements Mercado {
 
 	private final static List<String> EXCHANGES = new ArrayList<>(Arrays.asList("XLIS", "XAMS", "XBRU"));
 
-	public List<String> getAcoes() {
+	private ApiKeyAuth autenticacao(){
 		ApiClient defaultClient = Configuration.getDefaultApiClient();
 		ApiKeyAuth auth = (ApiKeyAuth) defaultClient.getAuthentication("ApiKeyAuth");
 		auth.setApiKey("OjcxNjhjYzQ5NzAwMThlNTlmZTI5YWI4M2NlZGFhMmI1");
+		return auth;
+	}
 
+
+	public List<String> getAcoes() {
+		autenticacao();
 		StockExchangeApi stockExchangeApi = new StockExchangeApi();
-
 		List<String> result = new ArrayList<>();
-
 		for(String identifier : EXCHANGES) {
 			Integer pageSize = 100;
-			String nextPage = null;
-
 			try {
-				ApiResponseStockExchangeSecurities r = stockExchangeApi.getStockExchangeSecurities(identifier, pageSize, nextPage);
+				ApiResponseStockExchangeSecurities r = stockExchangeApi.getStockExchangeSecurities(identifier, pageSize, null);
 				r.getSecurities().forEach(s -> result.add(s.getId()));
 			} catch (ApiException e) {
 				System.err.println("Could not retrieve Acoes. Defaulting to empty List!");
@@ -43,13 +44,9 @@ public class IntrinioAPI implements Mercado {
 	}
 
 	public String getNomeAcao(String identifier) {
-		ApiClient defaultClient = Configuration.getDefaultApiClient();
-		ApiKeyAuth auth = (ApiKeyAuth) defaultClient.getAuthentication("ApiKeyAuth");
-		auth.setApiKey("OjcxNjhjYzQ5NzAwMThlNTlmZTI5YWI4M2NlZGFhMmI1");
-
+		autenticacao();
 		SecurityApi securityApi = new SecurityApi();
 		String result = "";
-
 		try {
 			Security s = securityApi.getSecurityById(identifier);
 			result = s.getName();
@@ -61,13 +58,9 @@ public class IntrinioAPI implements Mercado {
 	}
 
 	public String getEmpresaAcao(String identifier) {
-		ApiClient defaultClient = Configuration.getDefaultApiClient();
-		ApiKeyAuth auth = (ApiKeyAuth) defaultClient.getAuthentication("ApiKeyAuth");
-		auth.setApiKey("OjcxNjhjYzQ5NzAwMThlNTlmZTI5YWI4M2NlZGFhMmI1");
-
+		autenticacao();
 		String result = "";
 		SecurityApi securityApi = new SecurityApi();
-
 		try {
 			Security s = securityApi.getSecurityById(identifier);
 			result = s.getName();
@@ -79,21 +72,15 @@ public class IntrinioAPI implements Mercado {
 	}
 
 	public double getCotacaoAcao(String identifier) {
-		ApiClient defaultClient = Configuration.getDefaultApiClient();
-		ApiKeyAuth auth = (ApiKeyAuth) defaultClient.getAuthentication("ApiKeyAuth");
-		auth.setApiKey("OjcxNjhjYzQ5NzAwMThlNTlmZTI5YWI4M2NlZGFhMmI1");
-
+		autenticacao();
 		SecurityApi securityApi = new SecurityApi();
 
-		// String | A Security identifier (Ticker, FIGI, ISIN, CUSIP, Intrinio ID)
-		LocalDate startDate = LocalDate.now().minusDays(4); // LocalDate | Return prices on or after the date
-		LocalDate endDate = LocalDate.now(); // LocalDate | Return prices on or before the date
-		String frequency = "daily"; // String | Return stock prices in the given frequency
-		Integer pageSize = 100; // Integer | The number of results to return
-		String nextPage = null; // String | Gets the next page of data from a previous API call
-
+		LocalDate startDate = LocalDate.now().minusDays(4);
+		LocalDate endDate = LocalDate.now();
+		String frequency = "daily";
+		Integer numberResultsToReturn = 100;
 		try {
-			ApiResponseSecurityStockPrices result = securityApi.getSecurityStockPrices(identifier, startDate, endDate, frequency, pageSize, nextPage);
+			ApiResponseSecurityStockPrices result = securityApi.getSecurityStockPrices(identifier, startDate, endDate, frequency, numberResultsToReturn, null);
 			BigDecimal close = BigDecimal.ZERO;
 			if (result.getStockPrices().size() > 1)
 				close = result.getStockPrices().get(0).getClose();
@@ -106,15 +93,9 @@ public class IntrinioAPI implements Mercado {
 
 	@Override
 	public double getCotacaoCommodity(String identifier) {
-		ApiClient defaultClient = Configuration.getDefaultApiClient();
-		ApiKeyAuth auth = (ApiKeyAuth) defaultClient.getAuthentication("ApiKeyAuth");
-		auth.setApiKey("OjcxNjhjYzQ5NzAwMThlNTlmZTI5YWI4M2NlZGFhMmI1");
-
+		autenticacao();
 		IndexApi indexApi = new IndexApi();
-
-		// String identifier = "$SIC.1"; // String | An Index Identifier (symbol, Intrinio ID)
-		String tag = "level"; // String | An Intrinio data tag ID or code-name
-
+		String tag = "level";
 		try {
 			BigDecimal result = indexApi.getSicIndexDataPointNumber(identifier, tag);
 			if (result.doubleValue() == 0)
@@ -127,18 +108,12 @@ public class IntrinioAPI implements Mercado {
 	}
 
 	public List<String> getCommodities() {
-		ApiClient defaultClient = Configuration.getDefaultApiClient();
-		ApiKeyAuth auth = (ApiKeyAuth) defaultClient.getAuthentication("ApiKeyAuth");
-		auth.setApiKey("OjcxNjhjYzQ5NzAwMThlNTlmZTI5YWI4M2NlZGFhMmI1");
-
+		autenticacao();
 		IndexApi indexApi = new IndexApi();
 		List<String> result = new ArrayList<>();
-
-		Integer pageSize = 100; // Integer | The number of results to return
-		String nextPage = null; // String | Gets the next page of data from a previous API call
-
+		Integer numberResultsToReturn = 100;
 		try {
-			ApiResponseSICIndices r = indexApi.getAllSicIndices(pageSize, nextPage);
+			ApiResponseSICIndices r = indexApi.getAllSicIndices(numberResultsToReturn, null);
 			r.getIndices().forEach(i -> result.add(i.getId()));
 		} catch (ApiException e) {
 			System.err.println("Could not get Commodities. Defaulting to empty List");
@@ -148,49 +123,34 @@ public class IntrinioAPI implements Mercado {
 	}
 
 	public String getNomeCommodity(String identifier) {
-		ApiClient defaultClient = Configuration.getDefaultApiClient();
-		ApiKeyAuth auth = (ApiKeyAuth) defaultClient.getAuthentication("ApiKeyAuth");
-		auth.setApiKey("OjcxNjhjYzQ5NzAwMThlNTlmZTI5YWI4M2NlZGFhMmI1");
-
+		autenticacao();
 		IndexApi indexApi = new IndexApi();
-
 		try {
 			SICIndex result = indexApi.getSicIndexById(identifier);
 			return result.getName();
 		} catch (ApiException e) {
 			System.err.println("Could not get name for " + identifier + ". Defaulting to empty name");
 		}
-
 		return "";
 	}
 
 	public String getPaisCommodity(String identifier) {
-		ApiClient defaultClient = Configuration.getDefaultApiClient();
-		ApiKeyAuth auth = (ApiKeyAuth) defaultClient.getAuthentication("ApiKeyAuth");
-		auth.setApiKey("OjcxNjhjYzQ5NzAwMThlNTlmZTI5YWI4M2NlZGFhMmI1");
-
+		autenticacao();
 		IndexApi indexApi = new IndexApi();
-
 		try {
 			SICIndex result = indexApi.getSicIndexById(identifier);
 			return result.getCountry();
 		} catch (ApiException e) {
 			System.err.println("Could not get pais for " + identifier + ". Defaulting to empty name");
 		}
-
 		return "";
 	}
 
 	@Override
 	public double getCotacaoIndice(String identifier) {
-		ApiClient defaultClient = Configuration.getDefaultApiClient();
-		ApiKeyAuth auth = (ApiKeyAuth) defaultClient.getAuthentication("ApiKeyAuth");
-		auth.setApiKey("OjcxNjhjYzQ5NzAwMThlNTlmZTI5YWI4M2NlZGFhMmI1");
-
+		autenticacao();
 		IndexApi indexApi = new IndexApi();
-
 		String tag = "level"; // String | An Intrinio data tag ID or code-name
-
 		try {
 			BigDecimal result = indexApi.getStockMarketIndexDataPointNumber(identifier, tag);
 			return result.doubleValue();
@@ -201,18 +161,12 @@ public class IntrinioAPI implements Mercado {
 	}
 
 	public List<String> getIndices() {
-		ApiClient defaultClient = Configuration.getDefaultApiClient();
-		ApiKeyAuth auth = (ApiKeyAuth) defaultClient.getAuthentication("ApiKeyAuth");
-		auth.setApiKey("OjcxNjhjYzQ5NzAwMThlNTlmZTI5YWI4M2NlZGFhMmI1");
-
+		autenticacao();
 		IndexApi indexApi = new IndexApi();
 		List<String> result = new ArrayList<>();
-
-		Integer pageSize = 100; // Integer | The number of results to return
-		String nextPage = null; // String | Gets the next page of data from a previous API call
-
+		Integer numberResultsToReturn = 100;
 		try {
-			ApiResponseStockMarketIndices r = indexApi.getAllStockMarketIndices(pageSize, nextPage);
+			ApiResponseStockMarketIndices r = indexApi.getAllStockMarketIndices(numberResultsToReturn, null);
 			r.getIndices().forEach(i -> result.add(i.getId()));
 		} catch (ApiException e) {
 			System.err.println("Could not get indices. Defaulting to empty list");
@@ -221,50 +175,31 @@ public class IntrinioAPI implements Mercado {
 	}
 
 	public String getNomeIndice(String identifier) {
-		ApiClient defaultClient = Configuration.getDefaultApiClient();
-		ApiKeyAuth auth = (ApiKeyAuth) defaultClient.getAuthentication("ApiKeyAuth");
-		auth.setApiKey("OjcxNjhjYzQ5NzAwMThlNTlmZTI5YWI4M2NlZGFhMmI1");
-
+		autenticacao();
 		IndexApi indexApi = new IndexApi();
 		String result = "";
-
 		try {
 			StockMarketIndex r = indexApi.getStockMarketIndexById(identifier);
 			return r.getName();
 		} catch (ApiException e) {
 			System.err.println("Could not get name for " + identifier + ". Defaulting to empty name");
 		}
-
 		return result;
 	}
 
 	@Override
 	public double getCotacaoMoeda(String identifier) {
-		ApiClient defaultClient = Configuration.getDefaultApiClient();
-		ApiKeyAuth auth = (ApiKeyAuth) defaultClient.getAuthentication("ApiKeyAuth");
-		auth.setApiKey("OjcxNjhjYzQ5NzAwMThlNTlmZTI5YWI4M2NlZGFhMmI1");
-
+		autenticacao();
 		ForexApi forexApi = new ForexApi();
-
-		//String pair = "EURUSD"; // String | The Forex Currency Pair code
-		String timeframe = "D1"; // String | The time interval for the quotes
-		String timezone = "UTC"; // String | Returns trading times in this timezone
-		LocalDate startDate = LocalDate.now().minusDays(7); // LocalDate | Return Forex Prices on or after this date
-		String startTime = null; // String | Return Forex Prices at or after this time (24-hour)
-		LocalDate endDate = LocalDate.now(); // LocalDate | Return Forex Prices on or before this date
-		String endTime = null; // String | Return Forex Prices at or before this time (24-hour)
-		Integer pageSize = 100; // Integer | The number of results to return
-		String nextPage = null; // String | Gets the next page of data from a previous API call
-
+		String timeframe = "D1";
+		String timezone = "UTC";
+		LocalDate startDate = LocalDate.now().minusDays(7);
+		LocalDate endDate = LocalDate.now();
+		Integer numberResultsToReturn = 100;
+		double value;
 		try {
-			ApiResponseForexPrices result = forexApi.getForexPrices(identifier, timeframe, timezone, startDate, startTime, endDate, endTime, pageSize, nextPage);
-			double value;
-			if (result.getPrices().size() > 0)
-				value = result.getPrices().get(0).getOpenBid().doubleValue();
-			else {
-				// if sandbox does not allow for getting this value, generate random between 0.5 and 3
-				value = ThreadLocalRandom.current().nextDouble(0.5, 3);
-			}
+			ApiResponseForexPrices result = forexApi.getForexPrices(identifier, timeframe, timezone, startDate,null, endDate,null, numberResultsToReturn, null);
+			value= getCotacaoMoeda(result);
 			return value;
 		} catch (ApiException e) {
 			System.err.println("Could not get quote for " + identifier + ". Defaulting to 0");
@@ -274,14 +209,7 @@ public class IntrinioAPI implements Mercado {
 
 	public List<String> getMoedas() {
 		List<String> result = new ArrayList<>();
-
-		ApiClient defaultClient = Configuration.getDefaultApiClient();
-		ApiKeyAuth auth = (ApiKeyAuth) defaultClient.getAuthentication("ApiKeyAuth");
-		auth.setApiKey("OjcxNjhjYzQ5NzAwMThlNTlmZTI5YWI4M2NlZGFhMmI1");
-
 		ForexApi forexApi = new ForexApi();
-
-
 		try {
 			ApiResponseForexPairs r = forexApi.getForexPairs();
 			r.getPairs().forEach(c -> result.add(c.getCode()));
@@ -297,5 +225,16 @@ public class IntrinioAPI implements Mercado {
 
 	public String getMoedaQuota(String identifier) {
 		return identifier.substring(2,6);
+	}
+
+
+	private double getCotacaoMoeda(ApiResponseForexPrices result){
+		double value;
+		if (result.getPrices().size() > 0)
+			value = result.getPrices().get(0).getOpenBid().doubleValue();
+		else {
+			value = ThreadLocalRandom.current().nextDouble(0.5, 3);
+		}
+		return value;
 	}
 }

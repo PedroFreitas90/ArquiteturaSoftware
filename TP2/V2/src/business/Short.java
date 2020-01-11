@@ -19,7 +19,7 @@ public class Short extends CFD {
     }
 
     public double getGanhoDoFecho() {
-        if (this.isAberto()) // se CFD aberto, não valoriza
+        if (this.isAberto())
             return 0;
         double valorInicial = this.getValorInvestido();
         double valorFinal = this.getValorPorUnidadeFinal() * this.getUnidadesDeAtivo();

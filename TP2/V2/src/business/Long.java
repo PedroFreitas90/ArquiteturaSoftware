@@ -17,7 +17,7 @@ public class Long extends CFD {
     }
 
     public double getGanhoDoFecho() {
-        if (this.isAberto()) // if CFD still open, no valorization
+        if (this.isAberto())
             return 0;
         return this.getValorPorUnidadeFinal() * this.getUnidadesDeAtivo();
     }
