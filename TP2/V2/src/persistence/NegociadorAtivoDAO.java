@@ -17,16 +17,12 @@ public class NegociadorAtivoDAO implements Map<String, Ativo> {
     public int size() {
         Connection c = Connect.connect();
         if (c == null) {
-            System.out.println("Can't connect!");
             return 0;
         }
-
         Statement s;
         int result = 0;
-
         try {
             s = c.createStatement();
-
             ResultSet rs = s.executeQuery("select count(*) from negociadorativo where idnegociador = " + nifNegociador + ";");
             rs.next();
             result = rs.getInt(1);
@@ -48,19 +44,14 @@ public class NegociadorAtivoDAO implements Map<String, Ativo> {
     public boolean containsKey(Object o) {
         Connection c = Connect.connect();
         if (c == null) {
-            System.out.println("Can't connect");
             return false;
         }
-
         String key = (String) o;
         boolean result = false;
-
         PreparedStatement s;
-
         try {
             s = c.prepareStatement("select * from negociadorativo where idAtivo = ?");
             s.setString(1, key);
-
             ResultSet resultSet = s.executeQuery();
             result = resultSet.isBeforeFirst();
             resultSet.close();
@@ -82,7 +73,6 @@ public class NegociadorAtivoDAO implements Map<String, Ativo> {
     public Ativo get(Object o) {
         Connection c = Connect.connect();
         if (c == null) {
-            System.out.print("Can't connect");
             return null;
         }
 
@@ -92,7 +82,6 @@ public class NegociadorAtivoDAO implements Map<String, Ativo> {
             s = c.prepareStatement("select * from negociadorativo where idnegociador = ? and idativo = ?");
             s.setInt(1, this.nifNegociador);
             s.setString(2, id);
-
             ResultSet rs = s.executeQuery();
             if (!rs.isBeforeFirst())
                 return null;
@@ -101,7 +90,7 @@ public class NegociadorAtivoDAO implements Map<String, Ativo> {
 
             String idAtivo = rs.getString("idativo");
             double origValue = rs.getDouble("valororiginal");
-            Ativo a = new AtivoDAO().get(idAtivo); // reuse code :P
+            Ativo a = new AtivoDAO().get(idAtivo);
             a.setValorPorUnidade(origValue);
             Connect.close(c);
             return a;
@@ -119,7 +108,6 @@ public class NegociadorAtivoDAO implements Map<String, Ativo> {
     public Ativo put(String id, Ativo ativo) {
         Connection c = Connect.connect();
         if (c == null){
-            System.out.print("Can't connect");
             return null;
         }
 
@@ -146,7 +134,6 @@ public class NegociadorAtivoDAO implements Map<String, Ativo> {
     public Ativo remove(Object o) {
         Connection c = Connect.connect();
         if (c == null) {
-            System.out.println("Could not connect!");
             return null;
         }
 
@@ -185,7 +172,6 @@ public class NegociadorAtivoDAO implements Map<String, Ativo> {
     public Collection<Ativo> values() {
         Connection c = Connect.connect();
         if (c == null){
-            System.out.println("Can't connect");
             return null;
         }
 
@@ -204,7 +190,7 @@ public class NegociadorAtivoDAO implements Map<String, Ativo> {
                 String idAt = rs.getString("idativo");
                 double valor = rs.getDouble("valororiginal");
 
-                Ativo a = new AtivoDAO().get(idAt); // reuse code :P
+                Ativo a = new AtivoDAO().get(idAt);
                 a.setValorPorUnidade(valor);
                 ativos.add(a);
 

@@ -13,16 +13,12 @@ public class NegociadorDAO implements Map<Integer, Negociador> {
     public int size() {
         Connection c = Connect.connect();
         if (c == null) {
-            System.out.println("Can't connect!");
             return 0;
         }
-
-        Statement s = null;
+        Statement s;
         int result = 0;
-
         try {
             s = c.createStatement();
-
             ResultSet resultSet = s.executeQuery("select count(*) from negociador");
             resultSet.next();
             result = resultSet.getInt(1);
@@ -46,7 +42,6 @@ public class NegociadorDAO implements Map<Integer, Negociador> {
     public boolean containsKey(Object o) {
         Connection c = Connect.connect();
         if (c == null) {
-            System.out.println("Can't connect!");
             return false;
         }
 
@@ -55,7 +50,7 @@ public class NegociadorDAO implements Map<Integer, Negociador> {
 
         Integer key = (Integer) o;
 
-        PreparedStatement s = null;
+        PreparedStatement s;
         boolean result = false;
 
         try {
@@ -84,7 +79,6 @@ public class NegociadorDAO implements Map<Integer, Negociador> {
     public Negociador get(Object o) {
         Connection c = Connect.connect();
         if (c == null) {
-            System.out.println("Can't connect!");
             return null;
         }
 
@@ -128,14 +122,13 @@ public class NegociadorDAO implements Map<Integer, Negociador> {
     public Negociador put(Integer key, Negociador negociador) {
         Connection c = Connect.connect();
         if (c == null) {
-            System.out.println("Can't connect!");
             return null;
         }
 
         if (key != negociador.getNif())
             return null;
 
-        PreparedStatement s = null;
+        PreparedStatement s ;
         try {
             if (this.containsKey(key)) {
                 s = c.prepareStatement("update negociador set nif = ?, nome = ?, email = ?, password = ?, saldo = ? where nif = ?;");
@@ -193,4 +186,7 @@ public class NegociadorDAO implements Map<Integer, Negociador> {
     public Set<Entry<Integer, Negociador>> entrySet() {
         return null;
     }
+
+
+
 }

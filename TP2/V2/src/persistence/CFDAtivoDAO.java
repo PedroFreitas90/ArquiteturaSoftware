@@ -24,7 +24,6 @@ public class CFDAtivoDAO implements List<Observer> {
     public int size() {
         Connection c = Connect.connect();
         if (c == null) {
-            System.out.println("Can't connect!");
             return 0;
         }
 
@@ -151,11 +150,8 @@ public class CFDAtivoDAO implements List<Observer> {
     public boolean add(Observer observer) {
         Connection c = Connect.connect();
         if (c == null) {
-            System.out.println("Can't connect!");
             return false;
         }
-
-        // we need to ignore the pattern here :(
         if (observer instanceof Negociador)
             return addNegociador((Negociador) observer, c);
         else if (observer instanceof CFD)
@@ -230,7 +226,6 @@ public class CFDAtivoDAO implements List<Observer> {
     public Observer get(int i) {
         Connection c = Connect.connect();
         if (c == null) {
-            System.out.println("Can't connect!");
             return null;
         }
 

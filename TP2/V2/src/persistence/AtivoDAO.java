@@ -11,7 +11,6 @@ public class AtivoDAO implements Map<String,Ativo>{
 	public int size() {
 		Connection c = Connect.connect();
 		if (c == null){
-			System.out.println("Can't connect");
 			return 0;
 		}
 
@@ -45,7 +44,6 @@ public class AtivoDAO implements Map<String,Ativo>{
 	public boolean containsKey(Object o) {
 		Connection c = Connect.connect();
 		if (c == null){
-			System.out.println("Can't connect");
 			return false;
 		}
 
@@ -85,7 +83,6 @@ public class AtivoDAO implements Map<String,Ativo>{
 
 		Connection c = Connect.connect();
 		if (c == null) {
-			System.out.println("Can't connect!");
 			return null;
 		}
 
@@ -146,7 +143,6 @@ public class AtivoDAO implements Map<String,Ativo>{
 
 		Connection c = Connect.connect();
 		if (c == null) {
-			System.out.println("Can't connect!");
 			return null;
 		}
 

@@ -13,56 +13,145 @@ import java.util.List;
 import java.util.Map;
 
 public class CreateBD {
-    private static void createRelations(Connection c) {
+
+
+    public  static  void createTableAtivo(Connection c){
         Statement s = null;
         try {
             s = c.createStatement();
 
             s.executeUpdate("drop table if exists Ativo cascade;");
             s.executeUpdate("create table Ativo (Id varchar primary key, Nome varchar, ValorPorUnidade float);");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public  static  void createTableAcao(Connection c){
+        Statement s = null;
+        try {
+            s = c.createStatement();
 
             s.executeUpdate("drop table if exists Acao cascade;");
             s.executeUpdate("create table Acao (Id int primary key, Empresa varchar);");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public  static  void createTableAcaoAtivo(Connection c){
+        Statement s = null;
+        try {
+            s = c.createStatement();
 
             s.executeUpdate("drop table if exists AcaoAtivo cascade;");
             s.executeUpdate("create table AcaoAtivo (IdAcao int references Acao(id), IdAtivo varchar references Ativo(id), primary key (IdAcao, IdAtivo));");
-
-
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public  static  void createTableIndice(Connection c){
+        Statement s = null;
+        try {
+            s = c.createStatement();
             s.executeUpdate("drop table if exists Indice cascade;");
             s.executeUpdate("create table Indice (Id int primary key, NumEmpresas int);");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public  static  void createTableIndiceAtivo(Connection c){
+        Statement s = null;
+        try {
+            s = c.createStatement();
 
             s.executeUpdate("drop table if exists IndiceAtivo cascade;");
             s.executeUpdate("create table IndiceAtivo (IdIndice int references Indice(id), IdAtivo varchar references Ativo(id), primary key (IdIndice, IdAtivo));");
 
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public  static  void createTableCommodity(Connection c){
+        Statement s = null;
+        try {
+            s = c.createStatement();
+
             s.executeUpdate("drop table if exists Commodity cascade;");
             s.executeUpdate("create table Commodity (Id int primary key, Pais varchar);");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public  static  void createTableCommodityAtivo(Connection c){
+        Statement s = null;
+        try {
+            s = c.createStatement();
 
             s.executeUpdate("drop table if exists CommodityAtivo cascade;");
             s.executeUpdate("create table CommodityAtivo (IdCommodity int references Commodity(id), IdAtivo varchar references Ativo(id), primary key (IdCommodity, IdAtivo));");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public  static  void createTableMoeda(Connection c){
+        Statement s = null;
+        try {
+            s = c.createStatement();
 
             s.executeUpdate("drop table if exists Moeda cascade;");
             s.executeUpdate("create table Moeda (Id int primary key, MoedaA varchar, MoedaB varchar);");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public  static  void createTableMoedaAtivo(Connection c){
+        Statement s = null;
+        try {
+            s = c.createStatement();
 
             s.executeUpdate("drop table if exists MoedaAtivo cascade;");
             s.executeUpdate("create table MoedaAtivo (IdMoeda int references Moeda(id), IdAtivo varchar references Ativo(id), primary key (IdMoeda, IdAtivo));");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public  static  void createTableNegociador(Connection c){
+        Statement s = null;
+        try {
+            s = c.createStatement();
 
             s.executeUpdate("drop table if exists Negociador cascade;");
             s.executeUpdate("create table Negociador(Nif int primary key, Nome varchar, Email varchar, Password varchar, Saldo float);");
 
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public  static  void createTableNegociadorAtivo(Connection c){
+        Statement s = null;
+        try {
+            s = c.createStatement();
+
             s.executeUpdate("drop table if exists NegociadorAtivo cascade;");
             s.executeUpdate("create table NegociadorAtivo (IdNegociador int references Negociador(nif), IdAtivo varchar references Ativo(id), ValorOriginal float, primary key (IdNegociador, IdAtivo));");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public  static  void createTableCFD(Connection c){
+        Statement s = null;
+        try {
+            s = c.createStatement();
 
             s.executeUpdate("drop table if exists CFD cascade;");
             s.executeUpdate("create table CFD (Id int primary key, Data timestamp, UnidadesDeAtivo float," +
                     "ValorPorUnidadeNaCompra float, LimiteSup float, LimiteInf float, " +
                     "IdAtivo varchar references ativo(id) on delete cascade, NifNegociador int references Negociador(nif)" +
                     ", Aberto boolean, ValorPorUnidadeNoFim float, long boolean);");
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-
     private static void populateRelations(Connection c) {
         Statement s;
         try {
@@ -74,7 +163,6 @@ public class CreateBD {
             e.printStackTrace();
         }
     }
-
     private static void populateAtivos() {
         Mercado m = new IntrinioAPI();
         Map<String, Ativo> ativos = new AtivoDAO();
@@ -85,7 +173,6 @@ public class CreateBD {
         populateCommodities(m, ativos);
         System.out.println("Finished populating assets!");
     }
-
     private static void populateAcoes(MercadoAcao m, Map<String, Ativo> ativos) {
         List<String> acoesId = m.getAcoes();
         for(String id : acoesId) {
@@ -96,7 +183,6 @@ public class CreateBD {
             ativos.put(id, a);
         }
     }
-
     private static void populateIndices(MercadoIndice m, Map<String, Ativo> ativos) {
         List<String> indicesId = m.getIndices();
         for(String id : indicesId) {
@@ -106,7 +192,6 @@ public class CreateBD {
             ativos.put(id, a);
         }
     }
-
     private static void populateMoedas(MercadoMoeda m, Map<String, Ativo> ativos) {
         List<String> moedasId = m.getMoedas();
         for(String id : moedasId) {
@@ -118,7 +203,6 @@ public class CreateBD {
             ativos.put(id,a);
         }
     }
-
     private static void populateCommodities(MercadoCommodity m, Map<String, Ativo> ativos) {
         List<String> commoditiesId = m.getCommodities();
         for(String id : commoditiesId) {
@@ -128,6 +212,20 @@ public class CreateBD {
             Ativo a = new Commodity(id, nome, vpu, pais);
             ativos.put(id, a);
         }
+    }
+    private static void createRelations(Connection c) {
+        createTableAtivo(c);
+        createTableAcao(c);
+        createTableAcaoAtivo(c);
+        createTableIndice(c);
+        createTableIndiceAtivo(c);
+        createTableCommodity(c);
+        createTableCommodityAtivo(c);
+        createTableMoeda(c);
+        createTableMoedaAtivo(c);
+        createTableNegociador(c);
+        createTableNegociadorAtivo(c);
+        createTableCFD(c);
     }
 
 

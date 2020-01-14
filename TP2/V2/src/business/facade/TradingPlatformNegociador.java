@@ -114,12 +114,10 @@ public class TradingPlatformNegociador implements FacadeNegociador {
     public double fecharCFD(int id) throws CFDNaoExisteException {
         if (!this.cfds.containsKey(id))
             throw new CFDNaoExisteException(id);
-
-
         CFD c = this.cfds.get(id);
         Ativo a = this.ativos.get(c.getIdAtivo());
         c.fecharCFD(a.getValorPorUnidade());
-        this.cfds.put(id, c); // to update state
+        this.cfds.put(id, c);
 
         double saldoAAdicionar = c.getGanhoDoFecho();
 

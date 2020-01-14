@@ -19,16 +19,12 @@ public class CFDNegociadorDAO implements List<CFD>{
 	public int size() {
 		Connection c = Connect.connect();
 		if (c == null) {
-			System.out.println("Can't connect!");
 			return 0;
 		}
-
 		Statement s;
 		int result = 0;
-
 		try {
 			s = c.createStatement();
-
 			ResultSet rs = s.executeQuery("select count(*) from cfd where nifnegociador = " + nifNegociador +" and aberto = true");
 			rs.next();
 			result = rs.getInt(1);
@@ -111,7 +107,6 @@ public class CFDNegociadorDAO implements List<CFD>{
 	public CFD get(int i) {
 		Connection c = Connect.connect();
 		if (c == null) {
-			System.out.println("Can't connect!");
 			return null;
 		}
 

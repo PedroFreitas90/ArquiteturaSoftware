@@ -14,8 +14,8 @@ public class Connect {
             Connection c = DriverManager.getConnection("jdbc:postgresql://localhost:5432/tplatform","davide","jw8s0F4");
             return c;
         } catch (SQLException | ClassNotFoundException e) {
-            // unable to connect
             e.printStackTrace();
+            System.out.println("Can't connect!");
         }
         return null;
     }
@@ -24,7 +24,6 @@ public class Connect {
         try {
             c.close();
         } catch (Exception e) {
-            // nothing to do here :/
         }
     }
 }

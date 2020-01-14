@@ -17,7 +17,6 @@ public class CFDDAO implements Map<Integer, CFD> {
 
         Connection c = Connect.connect();
         if (c == null){
-            System.out.println("Can't connect!");
             return 0;
         }
         Statement s;
@@ -50,7 +49,6 @@ public class CFDDAO implements Map<Integer, CFD> {
     public boolean containsKey(Object o) {
         Connection c = Connect.connect();
         if (c == null){
-            System.out.println("Can't connect!");
             return false;
         }
 
@@ -84,7 +82,6 @@ public class CFDDAO implements Map<Integer, CFD> {
 
         Connection c = Connect.connect();
         if (c == null){
-            System.out.println("Can't connect!");
             return null;
         }
 
@@ -97,7 +94,6 @@ public class CFDDAO implements Map<Integer, CFD> {
             s.setInt(1,key);
 
             ResultSet resultSet = s.executeQuery();
-            // não há CFD com aquele id
             if(!resultSet.isBeforeFirst())
                 return null;
 
@@ -153,7 +149,6 @@ public class CFDDAO implements Map<Integer, CFD> {
     public CFD put(Integer integer, CFD cfd) {
         Connection c = Connect.connect();
         if (c == null){
-            System.out.println("Can't connect!");
             return null;
         }
 

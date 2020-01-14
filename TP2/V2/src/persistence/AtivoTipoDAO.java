@@ -34,7 +34,6 @@ public class AtivoTipoDAO implements Map<String, List<Ativo>> {
     public List<Ativo> get(Object o) {
         Connection c = Connect.connect();
         if (c == null){
-            System.out.println("Can't connect!");
             return null;
         }
 
