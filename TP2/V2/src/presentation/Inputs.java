@@ -3,15 +3,9 @@ package presentation;
 import java.util.Scanner;
 
 public class Inputs implements KeyboardInputs {
+    Scanner sc = new Scanner(System.in);
 
-
-    /**
-     * @param defaultOption User will pick this option if invalid input
-     * @param maxOption Max number in the options
-     * @return chosen option
-     */
     public int chooseOption(int defaultOption, int maxOption) {
-        Scanner sc = new Scanner(System.in);
         try {
             defaultOption = sc.nextInt();
             if (defaultOption > maxOption)
@@ -59,31 +53,29 @@ public class Inputs implements KeyboardInputs {
         return result;
     }
 
-    //NEW
     public int getNif(UILanguage lang){
         System.out.println(lang.getInsertYourNif());
         int nif = getInt();
         return nif;
     }
-    //NEW
-    public String getNome(UILanguage lang){
+
+    public String getNome(UILanguage lang) {
         System.out.println(lang.getInsertName());
         String nome = getString();
         return nome;
     }
-    //NEW
     public String getEmail(UILanguage lang){
         System.out.println(lang.getInsertEmail());
         String email = getString();
         return email;
     }
-    //NEW
+
     public String getPassword(UILanguage lang){
         System.out.println(lang.getInsertYourPassword());
         String password = getString();
         return password;
     }
-    //NEW
+
     public double getSaldo(UILanguage lang){
         System.out.println(lang.getInsertSaldo());
         double saldo = getDouble();

@@ -99,7 +99,6 @@ public class TextUINegociador implements UINegociador {
         }
     }
 
-    //new
     private List<String> ativosAsString(List<Ativo> ativos){
         return ativos.stream().map(Ativo::toString).collect(Collectors.toList());
     }
@@ -145,8 +144,6 @@ public class TextUINegociador implements UINegociador {
         }
         System.out.println(lang.getSaldo() + saldoFinal);
         showPaginaInicial();
-
-
     }
 
     private void showAllAtivos(){
@@ -157,7 +154,6 @@ public class TextUINegociador implements UINegociador {
         int tipo = inputs.chooseOption(options.size(), options.size() - 1);
         List<Ativo> ativos = this.facade.getAtivos(AtivoConsts.ALL_ATIVOS[tipo]);
         ativos.forEach(a -> System.out.println(a.toString())); // update to customize according to lang
-
     }
 
     private void showConsultarAtivos() {
@@ -217,7 +213,6 @@ public class TextUINegociador implements UINegociador {
         showPaginaInicial();
     }
 
-    // NEW
     private int chooseTypeOfAtivo(){
         List<String> options = this.factory.getAssetsUILanguage().getTypesOfAssets();
         System.out.print(listOptions(options)); // print types of assets
@@ -233,7 +228,7 @@ public class TextUINegociador implements UINegociador {
         int ativo = inputs.chooseOption(ativos.size(), ativos.size() - 1);
         return ativo;
     }
-    // NEW
+
     private String choose_tipoAtivo(SetCFDUILanguage lang){
         List<String> tiposCFD = lang.getTypesOfCFD();
         System.out.println(lang.getChooseTypeOfCFD());
@@ -242,7 +237,7 @@ public class TextUINegociador implements UINegociador {
         String tipo = tiposCFD.get(tipoCFD);
         return tipo;
     }
-    // NEW
+
     private double getUnidades(SetCFDUILanguage lang){
         double saldo = this.facade.getSaldo(this.nif);
         System.out.println(lang.getInsertUnitsToInvest() + "\n" + lang.getYouHave() + saldo + lang.getToInvest());
@@ -288,8 +283,6 @@ public class TextUINegociador implements UINegociador {
         return result;
     }
 
-
-    //NEW
     private void nextMenu(UILanguage lang,boolean inserted,int nif){
         if (inserted) {
             System.out.println(lang.getNegociatorInserted());
@@ -310,7 +303,6 @@ public class TextUINegociador implements UINegociador {
         double saldo = inputs.getSaldo(lang);
         boolean inserted = this.facade.registarNegociador(nif,nome,email,password,saldo);
         nextMenu(lang,inserted,nif);
-
     }
 
     private void showAdeus() {
