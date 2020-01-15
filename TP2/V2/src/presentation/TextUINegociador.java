@@ -17,11 +17,13 @@ public class TextUINegociador implements UINegociador {
     private FacadeNegociador facade;
     private Integer nif;
     private UILanguageFactory factory;
+    private KeyboardInputs inputs;
 
     public TextUINegociador(FacadeNegociador f, String lang) {
         this.facade = f;
         this.nif = null;
         this.factory = new UILanguageFactory(lang);
+        this.inputs = new Inputs();
     }
 
     public void start() {
@@ -41,63 +43,10 @@ public class TextUINegociador implements UINegociador {
         return separator + opsString + separator;
     }
 
-    /**
-     * @param defaultOption User will pick this option if invalid input
-     * @param maxOption Max number in the options
-     * @return chosen option
-     */
-    private static int chooseOption(int defaultOption, int maxOption) {
-        Scanner sc = new Scanner(System.in);
-        try {
-            defaultOption = sc.nextInt();
-            if (defaultOption > maxOption)
-                defaultOption = maxOption;
-        }
-        catch (Exception e) {
-            System.err.println("Not a valid integer!");
-        }
-        return defaultOption;
-    }
-
-    private static String getString() {
-        Scanner sc = new Scanner(System.in);
-        return sc.next();
-    }
-
-    private static int getInt() {
-        return chooseOption(0,Integer.MAX_VALUE);
-    }
-
-    private static double getDouble() {
-        Scanner sc = new Scanner(System.in);
-        double result = 0;
-        try {
-            result = sc.nextDouble();
-        }
-        catch (Exception e) {
-            System.err.println("Not a valid double");
-        }
-        return result;
-    }
-
-    private static boolean getBoolean() {
-        Scanner sc = new Scanner(System.in);
-        boolean result = false;
-        try {
-            String s = sc.next();
-            if (s.equals("s"))
-                result = true;
-        }
-        catch (Exception e) {
-            System.out.println("Not a valid boolean");
-        }
-        return result;
-    }
-
     private void showMenuInicial() {
         List<String> options = this.factory.getLang().getInitialMenuOptions();
         System.out.print(listOptions(options));
-        int choice = chooseOption(2, options.size() - 1);
+        int choice = inputs.chooseOption(2, options.size() - 1);
         switch (choice) {
             case 0: showMenuLogin();
                     break;
@@ -110,10 +59,8 @@ public class TextUINegociador implements UINegociador {
 
     private void showMenuLogin() {
         UILanguage lang = this.factory.getLang();
-        System.out.println(lang.getInsertYourNif());
-        int nif = getInt();
-        System.out.println(lang.getInsertYourPassword());
-        String pass = getString();
+        int nif = inputs.getNif(lang);
+        String pass = inputs.getPassword(lang);
         boolean loggedIn = this.facade.verificarCredenciais(nif, pass);
         if (loggedIn) {
             this.nif = nif;
@@ -130,7 +77,7 @@ public class TextUINegociador implements UINegociador {
         List<String> options = this.factory.getLang().getInitialPageOptions();
         System.out.println(lang.getInicialPage());
         System.out.print(listOptions(options));
-        int choice = chooseOption(4, options.size() - 1);
+        int choice = inputs.chooseOption(4, options.size() - 1);
         switch (choice) {
             case 0: showEstabelecerCFD();
                     break;
@@ -152,22 +99,21 @@ public class TextUINegociador implements UINegociador {
         }
     }
 
+    //new
+    private List<String> ativosAsString(List<Ativo> ativos){
+        return ativos.stream().map(Ativo::toString).collect(Collectors.toList());
+    }
 
     private void showSubscreverAtivo(){
         UILanguage lang = this.factory.getLang();
         System.out.println(lang.getChooseAtivoToFollow());
-        //alterar
-        List<String> options = this.factory.getAssetsUILanguage().getTypesOfAssets();
-        System.out.print(listOptions(options)); // print types of assets
-        int typeOfAtivo = chooseOption(options.size(), options.size() - 1);
-
+        int typeOfAtivo = chooseTypeOfAtivo();
         List<Ativo> ativos = this.facade.getAtivos(AtivoConsts.ALL_ATIVOS[typeOfAtivo]);
-
-        List<String> ativosAsString = ativos.stream().map(Ativo::toString).collect(Collectors.toList());
+        List<String> ativosAsString = ativosAsString(ativos);
         System.out.println(lang.getInsertAssetToInvest());
         System.out.print(listOptions(ativosAsString)); // print assets of given type
 
-        int escolha = chooseOption(ativosAsString.size(), ativosAsString.size() - 1);
+        int escolha = inputs.chooseOption(ativosAsString.size(), ativosAsString.size() - 1);
         this.facade.seguirAtivo(this.nif,ativos.get(escolha).getId());
         showPaginaInicial();
     }
@@ -189,7 +135,7 @@ public class TextUINegociador implements UINegociador {
     private void showAdicionarSaldo() {
         UILanguage lang = this.factory.getLang();
         System.out.println(lang.getInsertValue());
-        double saldo = getDouble();
+        double saldo = inputs.getDouble();
         double saldoFinal;
         try {
             saldoFinal = this.facade.atualizarSaldo(this.nif, saldo);
@@ -205,10 +151,10 @@ public class TextUINegociador implements UINegociador {
 
     private void showAllAtivos(){
         GetAssetsUILanguage lang = this.factory.getAssetsUILanguage();
-        List<String> options = lang.getTypesOfAssets();
         System.out.println(lang.getInsertTypeofAsset());
+        List<String> options = lang.getTypesOfAssets();
         System.out.println(listOptions(options));
-        int tipo = chooseOption(options.size(), options.size() - 1);
+        int tipo = inputs.chooseOption(options.size(), options.size() - 1);
         List<Ativo> ativos = this.facade.getAtivos(AtivoConsts.ALL_ATIVOS[tipo]);
         ativos.forEach(a -> System.out.println(a.toString())); // update to customize according to lang
 
@@ -255,7 +201,7 @@ public class TextUINegociador implements UINegociador {
         UILanguage lang = this.factory.getLang();
         System.out.println(lang.getInsertCFDtoEnd());
         this.showCFDsAbertos();
-        int id = getInt();
+        int id = inputs.getInt();
         try {
             double valorCFD = this.facade.fecharCFD(id);
             double valorFinal = this.facade.getSaldo(this.nif);
@@ -275,26 +221,24 @@ public class TextUINegociador implements UINegociador {
     private int chooseTypeOfAtivo(){
         List<String> options = this.factory.getAssetsUILanguage().getTypesOfAssets();
         System.out.print(listOptions(options)); // print types of assets
-        int typeOfAtivo = chooseOption(options.size(), options.size() - 1);
+        int typeOfAtivo = inputs.chooseOption(options.size(), options.size() - 1);
         return typeOfAtivo;
     }
     // NEW
     private int chooseAtivo(List<Ativo> ativos,SetCFDUILanguage lang, int typeOfAtivo){
-        ativos = this.facade.getAtivos(AtivoConsts.ALL_ATIVOS[typeOfAtivo]);
-
-        List<String> ativosAsString = ativos.stream().map(Ativo::toString).collect(Collectors.toList());
+        List<String> ativosAsString = ativosAsString(ativos);
         System.out.println(lang.getInsertAssetToInvest());
         System.out.print(listOptions(ativosAsString)); // print assets of given type
 
-        int ativo = chooseOption(ativos.size(), ativos.size() - 1);
+        int ativo = inputs.chooseOption(ativos.size(), ativos.size() - 1);
         return ativo;
     }
     // NEW
-    private String tipoAtivo(SetCFDUILanguage lang){
+    private String choose_tipoAtivo(SetCFDUILanguage lang){
         List<String> tiposCFD = lang.getTypesOfCFD();
         System.out.println(lang.getChooseTypeOfCFD());
         System.out.println(listOptions(tiposCFD));
-        int tipoCFD = chooseOption(0, 1);
+        int tipoCFD = inputs.chooseOption(0, 1);
         String tipo = tiposCFD.get(tipoCFD);
         return tipo;
     }
@@ -302,15 +246,17 @@ public class TextUINegociador implements UINegociador {
     private double getUnidades(SetCFDUILanguage lang){
         double saldo = this.facade.getSaldo(this.nif);
         System.out.println(lang.getInsertUnitsToInvest() + "\n" + lang.getYouHave() + saldo + lang.getToInvest());
-        double unidades = getDouble();
+        double unidades = inputs.getDouble();
         return unidades;
     }
+
+
     private void showEstabelecerCFD() {
         SetCFDUILanguage lang = this.factory.getSetCFDUILanguage();
         int typeOfAtivo = chooseTypeOfAtivo();
         List<Ativo> ativos = this.facade.getAtivos(AtivoConsts.ALL_ATIVOS[typeOfAtivo]);
+        String tipo = choose_tipoAtivo(lang);
         int ativo = chooseAtivo(ativos,lang,typeOfAtivo);
-        String tipo = tipoAtivo(lang);
         double unidades = getUnidades(lang);
         double investimento = unidades * ativos.get(ativo).getValorPorUnidade();
         Double stopLossValue = definirLimite("Stop Loss", investimento);
@@ -330,11 +276,11 @@ public class TextUINegociador implements UINegociador {
     private Double definirLimite(String nomeLimite, double investimentoBase) {
         SetCFDUILanguage lang = this.factory.getSetCFDUILanguage();
         System.out.println(lang.getWishToDefine() + nomeLimite + lang.getQuestionYesOrNo() + "\n" + lang.getYouWillInvest() + investimentoBase + "€");
-        boolean queroLimite = getBoolean();
+        boolean queroLimite = inputs.getBoolean();
         Double result = null;
         if (queroLimite) {
             System.out.println(lang.getInsertValue());
-            result = getDouble();
+            result = inputs.getDouble();
             if (nomeLimite.equals("Take Profit") && result < investimentoBase ||
                     nomeLimite.equals("Stop Loss") && result > investimentoBase)
                 System.out.println(lang.getInvalidLimit());
@@ -342,36 +288,7 @@ public class TextUINegociador implements UINegociador {
         return result;
     }
 
-    //NEW
-    private int getNif(UILanguage lang){
-        System.out.println(lang.getInsertYourNif());
-        int nif = getInt();
-        return nif;
-    }
-    //NEW
-    private String getNome(UILanguage lang){
-        System.out.println(lang.getInsertName());
-        String nome = getString();
-        return nome;
-    }
-    //NEW
-    private String getEmail(UILanguage lang){
-        System.out.println(lang.getInsertEmail());
-        String email = getString();
-        return email;
-    }
-    //NEW
-    private String getPassword(UILanguage lang){
-        System.out.println(lang.getInsertYourPassword());
-        String password = getString();
-        return password;
-    }
-    //NEW
-    private Double getSaldo(UILanguage lang){
-        System.out.println(lang.getInsertSaldo());
-        double saldo = getDouble();
-        return saldo;
-    }
+
     //NEW
     private void nextMenu(UILanguage lang,boolean inserted,int nif){
         if (inserted) {
@@ -386,11 +303,11 @@ public class TextUINegociador implements UINegociador {
     }
     private void showMenuRegistar() {
         UILanguage lang = this.factory.getLang();
-        int nif = getNif(lang);
-        String nome = getNome(lang);
-        String email = getEmail(lang);
-        String password = getPassword(lang);
-        double saldo = getSaldo(lang);
+        int nif = inputs.getNif(lang);
+        String nome = inputs.getNome(lang);
+        String email = inputs.getEmail(lang);
+        String password = inputs.getPassword(lang);
+        double saldo = inputs.getSaldo(lang);
         boolean inserted = this.facade.registarNegociador(nif,nome,email,password,saldo);
         nextMenu(lang,inserted,nif);
 
