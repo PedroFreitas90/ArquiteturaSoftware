@@ -13,14 +13,10 @@ public class AtivoDAO implements Map<String,Ativo>{
 		if (c == null){
 			return 0;
 		}
-
 		Statement s;
 		int result = 0;
-
 		try {
-
 			s = c.createStatement();
-
 			ResultSet resultSet = s.executeQuery("select count(*) from ativo;");
 			resultSet.next();
 			result = resultSet.getInt(1);
@@ -29,9 +25,7 @@ public class AtivoDAO implements Map<String,Ativo>{
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
 		Connect.close(c);
-
 		return result;
 	}
 
@@ -46,15 +40,11 @@ public class AtivoDAO implements Map<String,Ativo>{
 		if (c == null){
 			return false;
 		}
-
 		if (!(o instanceof String))
 			return false;
-
 		String key = (String) o;
-
 		PreparedStatement s;
 		boolean result = false;
-
 		try {
 			s = c.prepareStatement("select id from ativo where id = ?");
 			s.setString(1,key);

@@ -19,25 +19,14 @@ public class AtivoManager implements Runnable {
         new Thread(this).start();
     }
 
-    /**
-     * @return todos os ativos no sistema
-     */
     public Collection<Ativo> getAll() {
         return this.ativosPorId.values();
     }
 
-    /**
-     * @param id id do ativo
-     * @return Ativo (ou null caso o ID não exista)
-     */
     public Ativo get(String id) {
         return this.ativosPorId.get(id);
     }
 
-    /**
-     * @param tipo tipo de ativo
-     * @return Lista de ativos com esse tipo
-     */
     public List<Ativo> getPorTipo(String tipo) {
         return this.ativosPorTipo.get(tipo);
     }

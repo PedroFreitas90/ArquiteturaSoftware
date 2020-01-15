@@ -196,7 +196,6 @@ public class CFDAtivoDAO implements List<Observer> {
 
     @Override
     public void clear() {
-        // do nothing
     }
 
     private Observer getNegociador(Connection c, int i) {

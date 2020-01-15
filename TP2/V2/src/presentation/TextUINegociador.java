@@ -39,7 +39,7 @@ public class TextUINegociador implements UINegociador {
             maxSize = Math.max(option.length(), maxSize);
         }
         int n = String.valueOf(options.size()).length();
-        String separator = MENU_SEPARATOR.repeat(maxSize + 2 + n) + "\n"; // + 2 for n)_
+        String separator = MENU_SEPARATOR.repeat(maxSize + 2 + n) + "\n";
         return separator + opsString + separator;
     }
 
@@ -110,7 +110,7 @@ public class TextUINegociador implements UINegociador {
         List<Ativo> ativos = this.facade.getAtivos(AtivoConsts.ALL_ATIVOS[typeOfAtivo]);
         List<String> ativosAsString = ativosAsString(ativos);
         System.out.println(lang.getInsertAssetToInvest());
-        System.out.print(listOptions(ativosAsString)); // print assets of given type
+        System.out.print(listOptions(ativosAsString));
 
         int escolha = inputs.chooseOption(ativosAsString.size(), ativosAsString.size() - 1);
         this.facade.seguirAtivo(this.nif,ativos.get(escolha).getId());
@@ -219,11 +219,10 @@ public class TextUINegociador implements UINegociador {
         int typeOfAtivo = inputs.chooseOption(options.size(), options.size() - 1);
         return typeOfAtivo;
     }
-    // NEW
     private int chooseAtivo(List<Ativo> ativos,SetCFDUILanguage lang, int typeOfAtivo){
         List<String> ativosAsString = ativosAsString(ativos);
         System.out.println(lang.getInsertAssetToInvest());
-        System.out.print(listOptions(ativosAsString)); // print assets of given type
+        System.out.print(listOptions(ativosAsString));
 
         int ativo = inputs.chooseOption(ativos.size(), ativos.size() - 1);
         return ativo;

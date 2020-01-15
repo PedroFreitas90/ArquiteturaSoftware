@@ -6,15 +6,6 @@ import java.sql.*;
 
 public class DAOHelper {
 
-
-    /**
-     * @param rs ResultSet que contem informação proveniente da base de dados
-     * @param id Id do ativo
-     * @param nome Nome do ativo
-     * @param valorPorUnidade Valor por unidade do ativo
-     * @return Ação
-     */
-
     protected static Acao getAcao(ResultSet rs, String id, String nome, double valorPorUnidade){
 
         try {
@@ -27,14 +18,6 @@ public class DAOHelper {
         }
         return null;
     }
-
-    /**
-     * @param rs ResultSet que contem informação proveniente da base de dados
-     * @param id Id do ativo
-     * @param nome Nome do ativo
-     * @param valorPorUnidade Valor por unidade do ativo
-     * @return Moeda
-     */
 
     protected static Moeda getMoeda(ResultSet rs, String id, String nome, double valorPorUnidade){
 
@@ -50,14 +33,6 @@ public class DAOHelper {
         return null;
     }
 
-    /**
-     * @param rs ResultSet que contem informação proveniente da base de dados
-     * @param id Id do ativo
-     * @param nome Nome do ativo
-     * @param valorPorUnidade Valor por unidade do ativo
-     * @return Indice
-     */
-
     protected static Indice getIndice(ResultSet rs, String id, String nome, double valorPorUnidade){
 
         try {
@@ -70,14 +45,6 @@ public class DAOHelper {
         }
         return null;
     }
-
-    /**
-     * @param rs ResultSet que contem informação proveniente da base de dados
-     * @param id Id do ativo
-     * @param nome Nome do ativo
-     * @param valorPorUnidade Valor por unidade do ativo
-     * @return Commodity
-     */
 
     protected static Commodity getCommodity(ResultSet rs, String id, String nome, double valorPorUnidade){
 
@@ -92,20 +59,10 @@ public class DAOHelper {
         return null;
     }
 
-    /**
-     * @param tipo Tipo de ativo (açaao, moeda, indice, commodity)
-     * @return Query que devolve a junção de 3 tabelas (ativo, tipoativo e tipo)
-     */
-
     protected static String getFullInformationForType(String tipo){
         return "select * from " + tipo +"ativo INNER JOIN ativo ON ativo.id = "+ tipo + "ativo.idativo INNER JOIN "+ tipo +" ON " + tipo +".id = "+ tipo +"ativo.id"+ tipo +";";
     }
 
-    /**
-     * @param c Conecção para a base de dados
-     * @param tipo Tipo de ativo (açaao, moeda, indice, commodity)
-     * @return O número de ativos do tipo desejado
-     */
     protected static int sizeAtivoPorTipo(Connection c, String tipo) {
 
         Statement s;
@@ -127,11 +84,6 @@ public class DAOHelper {
         return result;
     }
 
-    /**
-     * @param c Conecção para a base de dados
-     * @param ativo Ativo
-     * @return Devolve o ativo que foi inserivo na base de dados. A informação sobre este ativo é inserida na tabela acao e acaoativo.
-     */
     protected static Ativo putAcao(Connection c, Ativo ativo){
 
         PreparedStatement s;
@@ -160,12 +112,6 @@ public class DAOHelper {
         }
         return null;
     }
-
-    /**
-     * @param c Conecção para a base de dados
-     * @param ativo Ativo
-     * @return Devolve o ativo que foi inserivo na base de dados. A informação sobre este ativo é inserida na tabela moeda e moedaativo.
-     */
 
     protected static Ativo putMoeda(Connection c, Ativo ativo){
 
@@ -196,12 +142,6 @@ public class DAOHelper {
         return null;
     }
 
-    /**
-     * @param c Conecção para a base de dados
-     * @param ativo Ativo
-     * @return Devolve o ativo que foi inserivo na base de dados. A informação sobre este ativo é inserida na tabela indice e indiceativo.
-     */
-
     protected static Ativo putIndice(Connection c, Ativo ativo){
 
         PreparedStatement s;
@@ -209,12 +149,10 @@ public class DAOHelper {
         try{
             int res;
             int id = sizeAtivoPorTipo(c,"indice");
-
             s = c.prepareStatement("insert into indice values (?,?);");
             s.setInt(1, id);
             s.setInt(2, ((Indice) ativo).getNumEmpresas());
             s.executeUpdate();
-
             s = c.prepareStatement("insert into indiceativo values (?,?);");
             s.setInt(1, id);
             s.setString(2, ativo.getId());
@@ -229,12 +167,6 @@ public class DAOHelper {
         }
         return null;
     }
-
-    /**
-     * @param c Conecção para a base de dados
-     * @param ativo Ativo
-     * @return Devolve o ativo que foi inserivo na base de dados. A informação sobre este ativo é inserida na tabela commodity e commodityativo.
-     */
 
     protected static Ativo putCommodity(Connection c, Ativo ativo){
 
@@ -264,12 +196,6 @@ public class DAOHelper {
         return null;
     }
 
-    /**
-     * @param c Conecção para a base de dados
-     * @param id Id do ativo
-     * @return a classe a que o ativo com o id fornecido pertence
-     */
-
     protected static String getClassAtivo( Connection c, String id){
 
         PreparedStatement s;
@@ -294,13 +220,6 @@ public class DAOHelper {
         return null;
     }
 
-    /**
-     * @param c Conecção para a base de dados
-     * @param id Id do ativo
-     * @param nome Nome do ativo
-     * @param valorPorUnidade Valor por unidade do ativo
-     * @return Acao
-     */
     protected static Acao getAcao(Connection c, String id, String nome, double valorPorUnidade){
 
         PreparedStatement s;
@@ -324,14 +243,6 @@ public class DAOHelper {
         }
         return null;
     }
-
-    /**
-     * @param c Conecção para a base de dados
-     * @param id Id do ativo
-     * @param nome Nome do ativo
-     * @param valorPorUnidade Valor por unidade do ativo
-     * @return Moeda
-     */
 
     protected static Moeda getMoeda(Connection c, String id, String nome, double valorPorUnidade){
 
@@ -358,14 +269,6 @@ public class DAOHelper {
         return null;
     }
 
-    /**
-     * @param c Conecção para a base de dados
-     * @param id Id do ativo
-     * @param nome Nome do ativo
-     * @param valorPorUnidade Valor por unidade do ativo
-     * @return Indice
-     */
-
     protected static Indice getIndice(Connection c, String id, String nome, double valorPorUnidade){
 
         PreparedStatement s;
@@ -373,15 +276,11 @@ public class DAOHelper {
         try {
             s = c.prepareStatement("select * from indiceativo inner join indice ON indice.id = indiceativo.idindice where indiceativo.idativo = ?");
             s.setString(1,id);
-
             ResultSet resultSet = s.executeQuery();
-
             if (!resultSet.isBeforeFirst())
                 return null;
-
             resultSet.next();
             int num_empresas = resultSet.getInt("numempresas");
-
             return (new Indice(id,nome,valorPorUnidade,num_empresas));
         }
         catch (SQLException e) {
@@ -390,14 +289,6 @@ public class DAOHelper {
         return null;
     }
 
-    /**
-     * @param c Conecção para a base de dados
-     * @param id Id do ativo
-     * @param nome Nome do ativo
-     * @param valorPorUnidade Valor por unidade do ativo
-     * @return Commodity
-     */
-
     protected static Commodity getCommodity(Connection c, String id, String nome, double valorPorUnidade){
 
         PreparedStatement s;
@@ -405,15 +296,11 @@ public class DAOHelper {
         try {
             s = c.prepareStatement("select * from commodityativo inner join commodity ON commodity.id = commodityativo.idcommodity where commodityativo.idativo = ?");
             s.setString(1,id);
-
             ResultSet resultSet = s.executeQuery();
-
             if (!resultSet.isBeforeFirst())
                 return null;
-
             resultSet.next();
             String pais = resultSet.getString("pais");
-
             return (new Commodity(id,nome,valorPorUnidade,pais));
         }
         catch (SQLException e) {

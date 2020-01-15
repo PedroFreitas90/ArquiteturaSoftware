@@ -30,20 +30,11 @@ public class Negociador implements Observer {
     	this.ativos = new NegociadorAtivoDAO(nif);
     }
 
-	/**
-	 * @param valor a adicionar/remover
-	 * @return saldo após a atualização
-	 */
 	public double adicionarSaldo(double valor) {
 		this.saldo += valor;
 		return this.saldo;
 	}
 
-	/**
-	 * @param nif nif do negociador
-	 * @param password password do negociador
-	 * @return se corresponde às credenciais que o negociador forneceu no momento de criação
-	 */
 	public boolean verificarCredenciais(int nif, String password) {
 		return this.nif == nif && this.password.equals(password);
 	}
@@ -72,10 +63,6 @@ public class Negociador implements Observer {
 		return this.saldo;
 	}
 
-	/**
-	 * @param valor valor que se quer saber se o negociador pode dispender
-	 * @return true se tem saldo suficiente, false se não
-	 */
 	public boolean podeGastar(double valor) {
     	return this.saldo >= valor;
 	}
@@ -90,9 +77,6 @@ public class Negociador implements Observer {
 		return sb.toString();
 	}
 
-	/**
-	 * @return Uma Lista com os CFDs do Negociador ainda abertos
-	 */
 	public List<CFD> getCFDsAbertos() {
     	List<CFD> result = new ArrayList<>();
     	for(int i = 0; i < this.cfds.size(); i++) {

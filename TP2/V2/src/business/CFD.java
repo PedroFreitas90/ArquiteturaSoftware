@@ -84,10 +84,6 @@ public abstract class CFD implements Observer {
 		return valorPorUnidadeFinal;
 	}
 
-	/**
-	 * @param valorAtivo valor atual por unidade do ativo
-	 * @return True se o CFD se encontra fechado, false se encontra aberto
-	 */
 	public boolean fecharCFD(double valorAtivo) {
 		if (this.aberto) {
 			this.aberto = false;
@@ -97,15 +93,8 @@ public abstract class CFD implements Observer {
 		return false;
 	}
 
-	/**
-	 * @return quanto deve ser atribuído ao saldo do negociador, caso termine o CFD
-	 */
 	public abstract double getGanhoDoFecho();
 
-	/**
-	 * @param valorAtivo base para gerar valorização de CFD
-	 * @return valor de um CFD para um dado valor de ativo
-	 */
 	public abstract double getValorCFD(double valorAtivo);
 
 	public String toString() {
@@ -122,7 +111,6 @@ public abstract class CFD implements Observer {
 		sb.append("Valor Por Unidade no Final: ").append(this.valorPorUnidadeFinal).append("\n");
 		return sb.toString();
 	}
-
 
 	public void setId(int id){
 		this.id=id;
@@ -145,8 +133,5 @@ public abstract class CFD implements Observer {
 		return (this.limitSup!=null && valorDoCFD >= this.limitSup )|| (this.limiteInf != null && valorDoCFD <= limiteInf);
 	}
 
-	/**
-	 * @return retorna o nome do tipo de CFD (useful para UI)
-	 */
 	public abstract String getTipo();
 }

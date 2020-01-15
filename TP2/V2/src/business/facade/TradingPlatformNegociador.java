@@ -25,14 +25,6 @@ public class TradingPlatformNegociador implements FacadeNegociador {
         this.negociadores = new NegociadorDAO();
     }
 
-    /**
-     * @param nif      Nif do negociador
-     * @param nome     Nome do negociador
-     * @param email    Email do negociador
-     * @param password Password do negociador
-     * @param saldo    Saldo inicial do negociador
-     * @return True se foi possível registar o negociador, false se não
-     */
     public boolean registarNegociador(int nif, String nome, String email, String password, double saldo) {
         Negociador n = new Negociador(nif, nome, email, password, saldo);
         if (this.negociadores.containsKey(nif))
@@ -41,42 +33,18 @@ public class TradingPlatformNegociador implements FacadeNegociador {
         return true;
     }
 
-    /**
-     * @return Todos os ativos disponíveis no sistema
-     */
     public List<Ativo> getAtivos() {
         return new ArrayList<>(this.ativos.getAll());
     }
 
-    /**
-     * @param tipo Tipo de ativo
-     * @return Lista de Ativos desse tipo
-     */
     public List<Ativo> getAtivos(String tipo) {
         return this.ativos.getPorTipo(tipo);
     }
 
-    /**
-     * @param id Id do ativo
-     * @return O Ativo pretendido, ou null se não existir
-     */
     public Ativo getAtivo(String id) {
         return this.ativos.get(id);
     }
 
-    /**
-     * @param idAtivo          id do ativo ao qual deve estar associado o CFD
-     * @param nifNegociador    nif de quem estabelece o CFD
-     * @param unidadesDeCompra numero de unidades do ativo que pretende adquirir
-     * @param limiteMin        stoploss, pode ser null
-     * @param limiteMax        maxprofit, pode ser null
-     * @param tipo             Long ou short
-     * @return o CFD registado
-     * @throws NegociadorNaoExisteException                caso se tente registar um CFD de um negociador que não está
-     *                                                     registado na plataforma
-     * @throws NegociadorNaoPossuiSaldoSuficienteException caso se tente estabelecer um CFD mas o negociador
-     *                                                     não possui saldo suficiente
-     */
     public CFD registarCFD(String idAtivo, int nifNegociador, double unidadesDeCompra, Double limiteMin, Double limiteMax, String tipo)
             throws NegociadorNaoExisteException, NegociadorNaoPossuiSaldoSuficienteException {
         if (!this.negociadores.containsKey(nifNegociador))
@@ -106,11 +74,6 @@ public class TradingPlatformNegociador implements FacadeNegociador {
         return  c;
     }
 
-    /**
-     * @param id do CFD
-     * @return o valor de fecho do CFD, isto é, quanto recebeu o negociador na sua carteira
-     * @throws CFDNaoExisteException caso se tente encerrar um CFD não existente
-     */
     public double fecharCFD(int id) throws CFDNaoExisteException {
         if (!this.cfds.containsKey(id))
             throw new CFDNaoExisteException(id);
@@ -131,10 +94,6 @@ public class TradingPlatformNegociador implements FacadeNegociador {
 
     }
 
-    /**
-     * @param nifNegociador nif do negociador que deseja obter a informação
-     * @return retorna a lista de CFDs abertos do negociador
-     */
     public List<CFD> getCFDs(int nifNegociador) throws NegociadorNaoExisteException {
         if (!this.negociadores.containsKey(nifNegociador))
             throw new NegociadorNaoExisteException(nifNegociador);
@@ -143,12 +102,6 @@ public class TradingPlatformNegociador implements FacadeNegociador {
         return n.getCFDsAbertos();
     }
 
-    /**
-     * @param nif     nif do utilizador
-     * @param quantia quantia a adicionar
-     * @return saldo atual do negociador
-     * @throws NegociadorNaoExisteException
-     */
     public double atualizarSaldo(int nif, double quantia) throws NegociadorNaoExisteException {
         if (!this.negociadores.containsKey(nif))
             throw new NegociadorNaoExisteException(nif);
@@ -160,11 +113,6 @@ public class TradingPlatformNegociador implements FacadeNegociador {
         return saldo;
     }
 
-    /**
-     * @param nif      nif do negociador
-     * @param password pass a verificar
-     * @return se as credenciais do negociador em causa correspondem aos valores dados
-     */
     public boolean verificarCredenciais(int nif, String password) {
         if (!this.negociadores.containsKey(nif))
             return false;
@@ -173,10 +121,6 @@ public class TradingPlatformNegociador implements FacadeNegociador {
         return n.verificarCredenciais(nif, password);
     }
 
-    /**
-     * @param nif nif do negociador
-     * @return saldo atual do negociador (ou 0 se este não existir)
-     */
     @Override
     public double getSaldo(int nif) {
         Negociador n = this.negociadores.get(nif);
@@ -186,20 +130,12 @@ public class TradingPlatformNegociador implements FacadeNegociador {
             return n.getSaldo();
     }
 
-    /**
-     * @param idCFD id do CFD
-     * @return valorização atual do CFD
-     */
     public double getValorAtualCFD(int idCFD) {
         CFD c = this.cfds.get(idCFD);
         Ativo a = this.ativos.get(c.getIdAtivo());
         return c.getValorCFD(a.getValorPorUnidade());
     }
 
-    /**
-     * @param nif     Negociador
-     * @param idAtivo id do ativo que pretende seguir
-     */
     public void seguirAtivo(int nif, String idAtivo) {
         Negociador n = this.negociadores.get(nif);
         Ativo a = this.ativos.get(idAtivo);
