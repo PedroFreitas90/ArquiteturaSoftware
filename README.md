@@ -13,3 +13,8 @@ Repositório para o trabalho prático de Arquitetura de Software
 ### 2ª Fase
   Reestruturação da solução aplicando os padrões. Resolver todas as funcionalidades.
   Entrega: 30/11
+  
+  
+## Repositório
+* Pasta do [TP1](https://github.com/PedroFreitas90/ArquiteturaSoftware/tree/master/TP1)
+* Pasta do [TP2](https://github.com/PedroFreitas90/ArquiteturaSoftware/tree/master/TP2)
